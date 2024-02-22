@@ -5,11 +5,8 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-
-// Import your pages
 import Login from "./pages/Login";
-
-// Import your authentication methods
+import PassengerDashboard from "./pages/passenger/Dashboard";
 import { auth_token, isAdmin, isClient } from "./auth/auth";
 
 // Create a private route for clients/passengers
@@ -68,6 +65,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/passenger" element={<PassengerDashboard />} />
       </Routes>
     </Router>
   );
