@@ -1,0 +1,76 @@
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
+// Import your pages
+import Login from "./pages/Login";
+
+// Import your authentication methods
+import { auth_token, isAdmin, isClient } from "./auth/auth";
+
+// Create a private route for clients/passengers
+const PassengerRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      auth_token() && isClient() ? (
+        <Component {...props} />
+      ) : (
+        <Navigate
+          to={{ pathname: "/login", state: { from: props.location } }}
+        />
+      )
+    }
+  />
+);
+
+// Create a private route for admins
+const AdminRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      auth_token() && isAdmin() ? (
+        <Component {...props} />
+      ) : (
+        <Navigate
+          to={{ pathname: "/login", state: { from: props.location } }}
+        />
+      )
+    }
+  />
+);
+
+// Define the login route
+const LoginRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      auth_token() ? (
+        <Navigate
+          to={{
+            pathname: "/my-account/my-ads",
+            state: { from: props.location },
+          }}
+        />
+      ) : (
+        <Component {...props} />
+      )
+    }
+  />
+);
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
