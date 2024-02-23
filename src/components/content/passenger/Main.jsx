@@ -3,6 +3,7 @@ import SeasonTicketsIcon from "../../../assets/images/SeasonTicketsIcon.png";
 import BookingHistoryIcon from "../../../assets/images/BookingHistoryIcon.png";
 import SeasonTicketsTile from "./SeasonTicketsTile/SeasonTicketsTile";
 import BookingHistoryTile from "./BookingHistoryTile/BookingHistoryTile";
+import SeasonTicketsImage from "../../../assets/images/SeasonTicketsImage.jpg";
 
 
 const Main = () => {
@@ -23,9 +24,11 @@ const Main = () => {
           <span className={`font-bold ${selectedContent === "bookingHistory" ? "text-blue-500" : ""}`}>Booking History</span>
         </div>
       </div>
-      <div className="flex w-[300px] h-full p-4">
-        {selectedContent === "seasonTickets" && <SeasonTicketsTile />}
-        {selectedContent === "bookingHistory" && <BookingHistoryTile />}
+      <div className="flex flex-1 w-full justify-center items-start p-14" style={{ backgroundImage: `url(${SeasonTicketsImage})`, backgroundSize: 'cover', backdropFilter: 'blur(20px)' }}>
+        <div className="w-[700px]">
+          {selectedContent === "seasonTickets" && <SeasonTicketsTile />}
+          {selectedContent === "bookingHistory" && <BookingHistoryTile />}
+        </div>
       </div>
     </div>
   );
