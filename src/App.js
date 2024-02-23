@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Login from "./pages/Login";
 import PassengerDashboard from "./pages/passenger/Dashboard";
+import AdminDashboard from "./pages/admin/Dashboard"
 import { auth_token, isAdmin, isClient } from "./auth/auth";
 
 // Create a private route for clients/passengers
@@ -66,6 +67,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/passenger" element={<PassengerDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
