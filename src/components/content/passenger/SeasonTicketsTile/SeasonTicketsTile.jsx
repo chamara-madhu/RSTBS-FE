@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import Input from "../../../shared/fields/Input";
 import Button from '../../../shared/buttons/Button';
+import PhoneInput from 'react-phone-input-2';
 
 const SeasonTicketsTile = () => {
   const [loading, _setLoading] = useState(false);
+  const [phone, setPhone] = useState('');
+
   return (
-    <div className="flex flex-col gap-4" style={{ backgroundColor: "rgba(255, 255, 255, 0.9)" , padding: "20px"  }}>
+    <div className="flex flex-col gap-4" style={{ backgroundColor: "rgba(255, 255, 255, 0.9)", padding: "20px" }}>
       <h2 className="text-3xl font-bold">Online Application for Season Ticket</h2><br></br>
       <div className="flex flex-col  gap-2">
         <label htmlFor="full-name" className="text-sm font-bold text-black-900">Full Name</label>
@@ -31,8 +34,18 @@ const SeasonTicketsTile = () => {
           placeholder="Enter your National Identity Card Number"
         />
       </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="phone" className="text-sm font-bold text-black-900">Phone</label>
+      <div className="flex flex-row gap-2">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center font-bold">
+            <PhoneInput
+              country={'lk'}
+              inputProps={{
+                placeholder: 'Enter your phone number',
+                specialLabel: 'Phonee'
+              }}
+            />
+          </div>
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="station-origin" className="text-sm font-bold text-black-900">Station Origin</label>
@@ -48,19 +61,19 @@ const SeasonTicketsTile = () => {
       </div>
       <div className="flex flex-row gap-2 ">
         <Button
-            type="submit"
-            variant="primary"
-            className="w-full"
-            isLoading={loading}
+          type="submit"
+          variant="primary"
+          className="w-full"
+          isLoading={loading}
         >
-            Submit for approval
+          Submit for approval
         </Button>
         <Button
-            type="submit"
-            variant="light"
-            isLoading={loading}
+          type="submit"
+          variant="light"
+          isLoading={loading}
         >
-            Cancel
+          Cancel
         </Button>
       </div>
     </div>
