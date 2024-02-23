@@ -1,8 +1,12 @@
 import React from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
+import MainAdmin from "../../components/content/admin/MainAdmin";
 
 const Dashboard = () => {
   return (
-    <p>fff</p>
+    <DashboardLayout>
+     <MainAdmin />
+    </DashboardLayout>
   );
 };
 
