@@ -16,15 +16,15 @@ const MainAdmin = () => {
       style={{ height: "calc(100vh - 72px)" }}
     >
       <div className="flex items-center mb-2 cursor-pointer" onClick={() => setSelectedContent("newRequests")}>
-        <img  src= {SendImage} style={{ width: '25px', height: 'auto', marginLeft: '35px' }} alt="N icon" className="mr-2" />
+        <img  src= {SendImage} style={{ width: '25px', height: 'auto', marginLeft: '20px' }} alt="N icon" className="mr-2" />
         <span className={`font-bold ${selectedContent === "newRequests" ? "text-blue-500" : ""}`}>New Requests</span>
       </div>
       <div className="flex items-center mb-2 cursor-pointer" onClick={() => setSelectedContent("allapplications")}>
-        <img src={ArchiveImage} style={{ width: '22px', height: 'auto', marginLeft: '35px' }} alt="A icon" className="mr-2" />
+        <img src={ArchiveImage} style={{ width: '22px', height: 'auto', marginLeft: '20px' }} alt="A icon" className="mr-2" />
         <span className={`font-bold ${selectedContent === "allapplications" ? "text-blue-500" : ""}`}>All Applications</span>
       </div>
       <div className="flex items-center mb-2 cursor-pointer" onClick={() => setSelectedContent("payments")}>
-        <img src={PaymentImage} style={{ width: '22px', height: 'auto', marginLeft: '35px' }} alt="P icon" className="mr-2" />
+        <img src={PaymentImage} style={{ width: '22px', height: 'auto', marginLeft: '20px' }} alt="P icon" className="mr-2" />
         <span className={`font-bold ${selectedContent === "payments" ? "text-blue-500" : ""}`}>Payments</span>
       </div>
     </div>
