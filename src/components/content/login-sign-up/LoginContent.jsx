@@ -109,11 +109,9 @@ const LoginContent = () => {
           localStorage.setItem("auth_token", res.data.token);
           localStorage.setItem("user_data", JSON.stringify(res.data.user));
           setLoading(false);
-          alert(res.data.user.role);
           if (res.data.user.role === 0) {
             navigate("/admin");
           } else {
-            alert("hi");
             navigate("/passenger");
           }
         })
