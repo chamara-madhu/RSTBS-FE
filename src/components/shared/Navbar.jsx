@@ -4,7 +4,7 @@ import UserImg from "../../assets/images/user.png";
 
 const Navbar = () => {
   return (
-    <nav className="bg-black shadow-lg">
+    <nav className="sticky top-0 z-10 bg-black shadow-lg">
       <div className="w-full px-4">
         <div className="flex items-center justify-between py-4">
           <div className="text-2xl font-semibold text-white">RSTBS</div>
