@@ -5,7 +5,7 @@ import Button from '../../../shared/buttons/Button';
 const SeasonTicketsTile = () => {
   const [loading, _setLoading] = useState(false);
   return (
-    <div className="flex flex-col gap-4" style={{ backgroundColor: "rgba(255, 255, 255, 0.9)" , padding: "20px"  }}> {/* Add a background color */}
+    <div className="flex flex-col gap-4" style={{ backgroundColor: "rgba(255, 255, 255, 0.9)" , padding: "20px"  }}>
       <h2 className="text-3xl font-bold">Online Application for Season Ticket</h2><br></br>
       <div className="flex flex-col  gap-2">
         <label htmlFor="full-name" className="text-sm font-bold text-black-900">Full Name</label>
