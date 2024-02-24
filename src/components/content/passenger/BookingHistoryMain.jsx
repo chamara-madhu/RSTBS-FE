@@ -23,7 +23,7 @@ const BookingHistoryMain = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col w-full px-14">
+    <>
       <PageHeader title="Your booking history" />
       <div className="w-full">
         {data.map((booking) => (
@@ -78,7 +78,7 @@ const BookingHistoryMain = () => {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 
