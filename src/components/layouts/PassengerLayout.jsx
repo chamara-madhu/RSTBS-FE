@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../shared/Navbar";
 import Sidebar from "../content/passenger/side-bar/Sidebar";
 
-const DashboardLayout = ({ children }) => {
+const PassengerLayout = ({ children }) => {
   return (
     <div className="flex flex-col w-full">
       <Navbar />
@@ -14,4 +14,4 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default PassengerLayout;

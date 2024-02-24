@@ -1,11 +1,11 @@
 import React from "react";
-import DashboardLayout from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/PassengerLayout";
 import MainAdmin from "../../components/content/admin/MainAdmin";
 
 const Dashboard = () => {
   return (
     <DashboardLayout>
-     <MainAdmin />
+      <MainAdmin />
     </DashboardLayout>
   );
 };

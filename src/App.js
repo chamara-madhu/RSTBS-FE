@@ -5,10 +5,12 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Login from "./pages/Login";
-import PassengerDashboard from "./pages/passenger/Dashboard";
+import SignUpLogin from "./pages/SignUpLogin";
+import SeasonTicket from "./pages/passenger/SeasonTicket";
 import AdminDashboard from "./pages/admin/Dashboard";
+import BookingHistory from "./pages/passenger/BookingHistory";
 import { auth_token, isAdmin, isClient } from "./auth/auth";
+import { BOOKING_HISTORY_PATH, SEASON_TICKET_PATH } from "./constant/paths";
 
 // Create a private route for clients/passengers
 const PassengerRoute = ({ component: Component, ...rest }) => (
@@ -18,9 +20,7 @@ const PassengerRoute = ({ component: Component, ...rest }) => (
       auth_token() && isClient() ? (
         <Component {...props} />
       ) : (
-        <Navigate
-          to={{ pathname: "/login", state: { from: props.location } }}
-        />
+        <Navigate to={{ pathname: "/", state: { from: props.location } }} />
       )
     }
   />
@@ -34,9 +34,7 @@ const AdminRoute = ({ component: Component, ...rest }) => (
       auth_token() && isAdmin() ? (
         <Component {...props} />
       ) : (
-        <Navigate
-          to={{ pathname: "/login", state: { from: props.location } }}
-        />
+        <Navigate to={{ pathname: "/", state: { from: props.location } }} />
       )
     }
   />
@@ -65,9 +63,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/season-ticket" element={<PassengerDashboard />} />
-        <Route path="/booking-history" element={<PassengerDashboard />} />
+        <Route path="/" element={<SignUpLogin />} />
+        <Route path={SEASON_TICKET_PATH} element={<SeasonTicket />} />
+        <Route path={BOOKING_HISTORY_PATH} element={<BookingHistory />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>

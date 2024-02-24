@@ -6,7 +6,7 @@ import Button from "../../shared/buttons/Button";
 import { loginAPI, signUpAPI, verifyOtpAPI } from "../../../api/authAPIs";
 import { isValidEmail } from "../../../utils/general";
 
-const LoginContent = () => {
+const SignUpLoginMain = () => {
   const [showSignUpView, setShowSignUpView] = useState(false);
   const [showOtpView, setShowOtpView] = useState(false);
   const [form, setForm] = useState({
@@ -322,4 +322,4 @@ const LoginContent = () => {
   );
 };
 
-export default LoginContent;
+export default SignUpLoginMain;
