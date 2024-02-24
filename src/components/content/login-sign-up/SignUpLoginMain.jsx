@@ -112,7 +112,7 @@ const SignUpLoginMain = () => {
           if (res.data.user.role === 0) {
             navigate("/admin");
           } else {
-            navigate("/passenger");
+            navigate("/season-ticket");
           }
         })
         .catch((err) => {
