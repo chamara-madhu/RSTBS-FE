@@ -5,6 +5,12 @@ import ReviewRequestsMain from './ReviewRequestsMain';
 import { ADMIN_REVIEW_REQUESTS_PATH } from '../../../constant/paths';
 
 const NewRequestsMain = () => {
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  
+  const handleReviewClick = (request) => {
+    setSelectedRequest(request);
+  };
+  
   const [requests, setRequests] = useState([
     { name: 'John Doe', nic: '123456789V', email: 'john@gmail.com', duration: '3 days' },
     { name: 'Jane Doe', nic: '997654321V', email: 'jane@gmail.com', duration: '5 days' },
