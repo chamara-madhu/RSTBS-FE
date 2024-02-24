@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import Select from "react-select";
 import classnames from "classnames";
-import { StylesConfig } from "react-select";
 
 const TypeOrSelect = forwardRef(
   (
@@ -112,7 +111,7 @@ const TypeOrSelect = forwardRef(
                 : [...options]
             }
             value={optionValue}
-            className="react-select-container"
+            className="w-full"
             styles={customStyles}
             theme={(theme) => ({
               ...theme,
