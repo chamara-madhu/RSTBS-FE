@@ -7,10 +7,12 @@ import {
 } from "react-router-dom";
 import SignUpLogin from "./pages/SignUpLogin";
 import SeasonTicket from "./pages/passenger/SeasonTicket";
-import AdminDashboard from "./pages/admin/Dashboard";
 import BookingHistory from "./pages/passenger/BookingHistory";
 import { auth_token, isAdmin, isClient } from "./auth/auth";
-import { BOOKING_HISTORY_PATH, SEASON_TICKET_PATH } from "./constant/paths";
+import { ADMIN_ALL_APPLICATIONS_PATH, ADMIN_NEW_REQUESTS_PATH, ADMIN_PAYMENTS_PATH, BOOKING_HISTORY_PATH, SEASON_TICKET_PATH } from "./constant/paths";
+import NewRequests from "./pages/admin/NewRequests";
+import AllApplications from "./pages/admin/AllApplications";
+import Payments from "./pages/admin/Payments";
 
 // Create a private route for clients/passengers
 const PassengerRoute = ({ component: Component, ...rest }) => (
@@ -66,7 +68,9 @@ function App() {
         <Route path="/" element={<SignUpLogin />} />
         <Route path={SEASON_TICKET_PATH} element={<SeasonTicket />} />
         <Route path={BOOKING_HISTORY_PATH} element={<BookingHistory />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path={ADMIN_NEW_REQUESTS_PATH} element={<NewRequests />} />
+        <Route path={ADMIN_ALL_APPLICATIONS_PATH} element={<AllApplications />} />
+        <Route path={ADMIN_PAYMENTS_PATH} element={<Payments />} />
       </Routes>
     </Router>
   );
