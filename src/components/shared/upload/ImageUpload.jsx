@@ -1,18 +1,21 @@
 import React, { useCallback, useRef, useState } from "react";
 import classNames from "classnames";
-import { UploadCloud } from "feather-icons-react";
+import { UploadCloud, X } from "feather-icons-react";
 
 const allowFileTypes = ["image/jpeg", "image/png"];
 
 const ImageUpload = ({
-  setFile,
+  name,
   value,
+  handleFile,
   existingValue,
   label,
   labelClass,
-  deleteImage,
+  removeImage,
   allowMaxFileSize = 1024 * 1024 * 2, // 2MB
   showRequiredLabel = false,
+  error,
+  height = "200px",
 }) => {
   const [fileErr, setFileErr] = useState("");
   const [isDragging, setIsDragging] = useState(false);
@@ -27,11 +30,11 @@ const ImageUpload = ({
       } else if (!allowFileTypes.includes(file?.type)) {
         setFileErr("File type is not allowed");
       } else {
-        setFile(e.target.files[0]);
+        handleFile(name, e.target.files[0]);
         setFileErr("");
       }
     },
-    [allowMaxFileSize, setFile]
+    [allowMaxFileSize, handleFile, name]
   );
 
   const openImageUpload = () => {
@@ -59,7 +62,7 @@ const ImageUpload = ({
     let draggedData = e.dataTransfer;
     let file = draggedData.files;
 
-    setFile(file[0]);
+    handleFile(name, file[0]);
   };
 
   return (
@@ -74,21 +77,20 @@ const ImageUpload = ({
       </label>
       {value || existingValue ? (
         <div className="flex justify-center">
-          <div className="relative w-[75px] h-[75px]">
+          <div
+            className="relative flex items-center justify-center w-full border rounded-lg border-pp-gray-300"
+            style={{ height: height }}
+          >
             <img
               src={existingValue || URL.createObjectURL(value)}
-              // width="75"
-              // height="75"
-              className="object-cover w-full h-full rounded-full"
-              alt="user profile image"
-              // loading="eager"
-              // decoding="async"
-              // priority={false}
+              className="object-cover w-auto h-auto max-w-full max-h-full"
+              alt={name}
             />
-            {/* <CloseIcon
-              onClick={deleteImage}
-              className="absolute bottom-[2px] w-5 h-5 p-1 bg-black rounded-full cursor-pointer right-[2px]"
-            /> */}
+            <X
+              onClick={() => removeImage(name)}
+              color="#667085"
+              className="absolute p-1 bg-white border rounded-full cursor-pointer w-7 h-7 top-2 right-2 hover:border-pp-gray-600"
+            />
           </div>
         </div>
       ) : (
@@ -102,7 +104,8 @@ const ImageUpload = ({
               "flex flex-col items-center gap-4 py-4 px-6 self-stretch rounded-lg border ",
               isDragging
                 ? "border-pp-primary-300 bg-pp-primary-25"
-                : "border-pp-gray-400 bg-white"
+                : "border-pp-gray-400 bg-white",
+              error ? "!border-red-500" : ""
             )}
           >
             <div className="flex flex-col items-center self-stretch gap-3">
@@ -149,7 +152,9 @@ const ImageUpload = ({
               </div>
             </div>
           </div>
-          {fileErr && <p className="mt-1 text-xs text-red-500">{fileErr}</p>}
+          {(fileErr || error) && (
+            <p className="mt-1 text-xs text-red-500">{error || fileErr}</p>
+          )}
         </div>
       )}
     </div>

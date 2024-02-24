@@ -1,10 +1,18 @@
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
 import UserImg from "../../assets/images/user.png";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user_data");
+
+    navigate("/");
+  };
   return (
-    <nav className="sticky top-0 z-10 bg-black shadow-lg">
+    <nav className="sticky top-0 z-50 bg-black shadow-lg">
       <div className="w-full px-4">
         <div className="flex items-center justify-between py-4">
           <div className="text-2xl font-semibold text-white">RSTBS</div>
@@ -43,7 +51,7 @@ const Navbar = () => {
               >
                 <Menu.Items className="absolute right-0 p-1 mt-2 origin-top-right bg-white shadow-lg cursor-pointer z-[100] rounded-xl w-52 ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <Menu.Item>
-                    {({}) => (
+                    {() => (
                       <a href={`/profile`}>
                         <div className="flex items-center w-full h-8 gap-2 px-4 m-0 overflow-hidden text-sm rounded-lg cursor-pointer text-pp-gray-900 hover:bg-pp-gray-200 active:bg-pp-gray-450">
                           {/* <UserIcon /> */}
@@ -54,10 +62,8 @@ const Navbar = () => {
                   </Menu.Item>
                   <div className="h-[1px] bg-pp-gray-450 my-1" />
                   <Menu.Item>
-                    {({}) => (
-                      <span
-                      //    onClick={handleLogout}
-                      >
+                    {() => (
+                      <span onClick={handleLogout}>
                         <div className="flex items-center w-full h-8 gap-2 px-4 m-0 overflow-hidden text-sm rounded-lg cursor-pointer text-pp-gray-900 hover:bg-pp-gray-200 active:bg-pp-gray-450">
                           {/* <LogoutIcon /> */}
                           <span className="text-sm font-medium">Logout</span>
