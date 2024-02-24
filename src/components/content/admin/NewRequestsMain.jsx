@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import ReviewRequests from './ReviewRequestsMain';
+import ReviewRequestsMain from './ReviewRequestsMain';
+import { ADMIN_REVIEW_REQUESTS_PATH } from '../../../constant/paths';
 
 const NewRequestsMain = () => {
   const [requests, setRequests] = useState([
@@ -53,15 +57,20 @@ const NewRequestsMain = () => {
             <th className="px-4 py-2">NIC</th>
             <th className="px-4 py-2">Email</th>
             <th className="px-4 py-2">Duration</th>
+            <th className="px-4 py-2">Actions</th>
           </tr>
         </thead>
         <tbody>
           {currentRequests.map((request, index) => (
             <tr key={index}>
-              <td className="border px-10 py-2">{request.name}</td>
+              <td className="border px-4 py-2">{request.name}</td>
               <td className="border px-4 py-2">{request.nic}</td>
               <td className="border px-4 py-2">{request.email}</td>
-              <td className="border px-14 py-2">{request.duration}</td>
+              <td className="border px-4 py-2">{request.duration}</td>
+              <td className="border px-4 py-2">
+                <Link to={ADMIN_REVIEW_REQUESTS_PATH} className="px-4 py-2 bg-blue-500 text-white rounded-md">
+                  Review</Link>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -69,8 +78,8 @@ const NewRequestsMain = () => {
 
       <div className="flex justify-between items-center">
         <div>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-md mr-2" onClick={prevPage} disabled={currentPage === 1}>Previous</button>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-md" onClick={nextPage} disabled={currentPage === totalPages}>Next</button>
+          <button className="px-4 py-2 bg-orange-500 text-white rounded-md mr-2" onClick={prevPage} disabled={currentPage === 1}>Previous</button>
+          <button className="px-4 py-2 bg-orange-500 text-white rounded-md" onClick={nextPage} disabled={currentPage === totalPages}>Next</button>
         </div>
         <span>{`Page ${currentPage} of ${totalPages}`}</span>
       </div>
