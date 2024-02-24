@@ -46,7 +46,7 @@ const Input = forwardRef(
         </label>
         <div
           className={classnames(
-            "flex relative outline-none w-full h-11 bg-white border rounded-lg shadow-xs",
+            "flex relative outline-none w-full h-10 bg-white border rounded-lg shadow-xs",
             focusClass,
             inputClass,
             error ? "border-red-500" : "border-pp-gray-300"
@@ -67,7 +67,7 @@ const Input = forwardRef(
             type={type}
             name={name}
             value={value}
-            className="w-full px-3.5 py-2.5 outline-none rounded-lg placeholder:text-pp-gray-500"
+            className="w-full px-3 h-full outline-none rounded-lg placeholder:text-pp-gray-500"
             onFocusCapture={() => setIsFocus(true)}
             onBlurCapture={() => setIsFocus(false)}
             onChange={handleChange}

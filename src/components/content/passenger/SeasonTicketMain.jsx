@@ -2,9 +2,12 @@ import React, { useCallback, useState } from "react";
 import Button from "../../shared/buttons/Button";
 import Input from "../../shared/fields/Input";
 import PageHeader from "../../shared/headers/PageHeader";
-// import Phone from "../../shared/fields/Phone";
+import Phone from "../../shared/fields/Phone";
+import TypeOrSelect from "../../shared/fields/TypeOrSelect";
+import ImageUpload from "../../shared/upload/ImageUpload";
 
 const SeasonTicketMain = () => {
+  const [file, setFile] = useState(null);
   const [form, setForm] = useState({
     phone: "",
   });
@@ -23,12 +26,12 @@ const SeasonTicketMain = () => {
   const handlePhone = (value) => {};
 
   return (
-    <div className="relative flex flex-col w-full px-14">
-      <PageHeader title="Online Application for Season Ticket" />
+    <div className="relative flex flex-col w-full px-14 mb-10">
+      <PageHeader title="Online application for season ticket" />
       <div className="w-1/2">
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-7">
           <Input
-            label="First Name"
+            label="First name"
             name="fullName"
             value={form.fullName}
             handleChange={handleChange}
@@ -52,65 +55,118 @@ const SeasonTicketMain = () => {
             showRequiredLabel
           />
 
-          {/* <Phone label="Phone" value={form.phone} handlePhone={handlePhone} /> */}
+          <Phone
+            label="Phone"
+            value={form.phone}
+            handlePhone={handlePhone}
+            showRequiredLabel
+          />
 
-          {/* <div className="flex flex-row gap-2">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center font-bold">
-                <PhoneInput
-                  country={"lk"}
-                  inputProps={{
-                    placeholder: "Enter your phone number",
-                    specialLabel: "Phonee",
-                  }}
-                />
-              </div>
+          <div className="flex gap-6 items-center flex-auto">
+            <TypeOrSelect
+              isClearable
+              label="Station origin"
+              name="category"
+              // getApi={(name) => CategoryService.getCategoryByName(name)}
+              labelClass="tracking-[0.28px] text-pp-gray-700"
+              className="flex-1 w-full"
+              onChange={handleChange}
+              options={[]}
+              value={form.category}
+              placeholder="E.g. Kandy"
+              showRequiredLabel
+            />
+            <TypeOrSelect
+              isClearable
+              label="Destination origin"
+              name="category"
+              // getApi={(name) => CategoryService.getCategoryByName(name)}
+              labelClass="tracking-[0.28px] text-pp-gray-700"
+              className="flex-1 w-full"
+              onChange={handleChange}
+              options={[]}
+              value={form.category}
+              placeholder="E.g. Colombo"
+              showRequiredLabel
+            />
+          </div>
+
+          <div className="flex gap-6 items-center flex-auto">
+            <Input
+              type="date"
+              label="Start date"
+              name="nic"
+              value={form.nic}
+              handleChange={handleChange}
+              error={form.nicErr}
+              showRequiredLabel
+            />
+            <Input
+              type="date"
+              label="End date"
+              name="nic"
+              value={form.nic}
+              handleChange={handleChange}
+              error={form.nicErr}
+              showRequiredLabel
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <p className="text-md font-bold mb-1">Upload Your NIC</p>
+            <p className="text-xs text-pp-gray-500 mb-4">
+              Upload the both sides of your NIC
+            </p>
+            <div className="flex gap-6 items-center flex-auto">
+              <ImageUpload
+                label="Front side"
+                value={file}
+                existingValue={form.avatar || ""}
+                setFile={setFile}
+                // deleteImage={deleteImage}
+                showRequiredLabel
+              />
+              <ImageUpload
+                label="Back side"
+                value={file}
+                existingValue={form.avatar || ""}
+                setFile={setFile}
+                // deleteImage={deleteImage}
+                showRequiredLabel
+              />
             </div>
-          </div> */}
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="station-origin"
-              className="text-sm font-bold text-black-900"
-            >
-              Station Origin
-            </label>
           </div>
-          <div className="flex flex-col gap-2 mb-4">
-            <label
-              htmlFor="start-date"
-              className="text-sm font-bold text-black-900"
-            >
-              Start date
-            </label>
+
+          <div className="flex flex-col">
+            <p className="text-md font-bold mb-1">
+              Upload the Grama Niladari Certification *
+            </p>
+            <p className="text-xs text-pp-gray-500 mb-4">
+              Upload the GN certification here.
+            </p>
+
+            <div className="flex items-center flex-auto">
+              <ImageUpload
+                value={file}
+                existingValue={form.avatar || ""}
+                setFile={setFile}
+                // deleteImage={deleteImage}
+              />
+            </div>
           </div>
-          <div className="flex flex-col gap-2 mb-4">
-            <label
-              htmlFor="upload-nic"
-              className="text-lg font-medium text-black-900"
-            >
-              Upload Your NIC
-            </label>
-          </div>
-          <div className="flex flex-col gap-2 mb-8">
-            <label
-              htmlFor="upload-gn"
-              className="text-lg font-medium text-black-900"
-            >
-              Upload the Grama Niladari Cerification
-            </label>
-          </div>
-          <div className="flex flex-row gap-2 ">
+
+          <div className="flex flex-row gap-2 mt-4">
             <Button
               type="submit"
-              variant="primary"
-              className="w-full"
+              variant="dark"
+              className="w-[200px]"
               isLoading={loading}
             >
               Submit for approval
             </Button>
-            <Button type="submit" variant="light" isLoading={loading}>
+            {/* <Button type="submit" variant="light" isLoading={loading}>
               Cancel
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
