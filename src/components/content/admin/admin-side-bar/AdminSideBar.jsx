@@ -1,15 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import PaymentsIcon from "../../../../assets/icons/credit-card.svg";
-import NewRequestsIcon from "../../../../assets/icons/send.svg";
-import AllApplicaticonsIcon from "../../../../assets/icons/file-minus.svg";
 import classNames from "classnames";
 import {
-  ADMIN_ALL_APPLICATIONS_PATH,
   ADMIN_NEW_REQUESTS_PATH,
   ADMIN_PAYMENTS_PATH,
 } from "../../../../constant/paths";
+import { HelpCircle, CreditCard } from "feather-icons-react";
 
 const AdminSidebar = () => {
   const location = useLocation();
@@ -29,10 +26,10 @@ const AdminSidebar = () => {
               : ""
           )}
         >
-          <img src={NewRequestsIcon} alt="Season ticket" /> New Requests
+          <HelpCircle size={16} /> New applications
         </div>
       </Link>
-      <Link to={ADMIN_ALL_APPLICATIONS_PATH}>
+      {/* <Link to={ADMIN_ALL_APPLICATIONS_PATH}>
         <div
           className={classNames(
             "flex text-sm items-center gap-3 px-4 h-[60px] ",
@@ -43,7 +40,7 @@ const AdminSidebar = () => {
         >
           <img src={AllApplicaticonsIcon} alt="All applications" /> All Applications
         </div>
-      </Link>
+      </Link> */}
       <Link to={ADMIN_PAYMENTS_PATH}>
         <div
           className={classNames(
@@ -53,7 +50,7 @@ const AdminSidebar = () => {
               : ""
           )}
         >
-          <img src={PaymentsIcon} alt="Payments" /> Payments
+          <CreditCard size={16} /> Pending payment approvals
         </div>
       </Link>
     </div>

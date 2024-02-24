@@ -1,3 +1,5 @@
+const { USER_ROLES } = require("../constant/general");
+
 exports.auth_token = () => {
   if (typeof window !== "undefined") {
     if (localStorage.getItem("auth_token")) {
@@ -14,7 +16,7 @@ exports.isAdmin = () => {
   if (typeof window !== "undefined") {
     if (
       localStorage.getItem("user_data") &&
-      JSON.parse(localStorage.getItem("user_data")).role === 0
+      JSON.parse(localStorage.getItem("user_data")).role === USER_ROLES.ADMIN
     ) {
       return true;
     } else {
@@ -25,11 +27,12 @@ exports.isAdmin = () => {
   }
 };
 
-exports.isClient = () => {
+exports.isPassenger = () => {
   if (typeof window !== "undefined") {
     if (
       localStorage.getItem("user_data") &&
-      JSON.parse(localStorage.getItem("user_data")).role === 1
+      JSON.parse(localStorage.getItem("user_data")).role ===
+        USER_ROLES.PASSENGER
     ) {
       return true;
     } else {

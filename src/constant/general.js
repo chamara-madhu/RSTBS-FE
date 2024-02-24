@@ -1,3 +1,9 @@
+export const USER_ROLES = {
+  ADMIN: 0,
+  PASSENGER: 1,
+  CHECKER: 2,
+};
+
 export const APPLICATION_STATUSES = {
   APPLICATION_PENDING: 0,
   PAYMENT_PENDING: 1,

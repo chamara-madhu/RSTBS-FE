@@ -219,7 +219,7 @@ const SeasonTicketMain = () => {
   };
 
   return (
-    <div className="relative flex flex-col w-full mb-10 px-14">
+    <>
       <PageHeader title="Online application for season ticket" />
       <div className="w-1/2">
         <form onSubmit={handleSubmit}>
@@ -390,7 +390,7 @@ const SeasonTicketMain = () => {
           </div>
         </form>
       </div>
-    </div>
+    </>
   );
 };
 

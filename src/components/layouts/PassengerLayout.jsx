@@ -8,7 +8,12 @@ const PassengerLayout = ({ children }) => {
       <Navbar />
       <div className="relative flex w-full">
         <Sidebar />
-        {children}
+        <div
+          className="relative flex flex-col w-full px-14"
+          style={{ width: "calc(100% - 300px)" }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
