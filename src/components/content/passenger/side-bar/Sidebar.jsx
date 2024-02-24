@@ -15,13 +15,13 @@ const Sidebar = () => {
 
   return (
     <div
-      className="flex sticky top-0 flex-col w-[300px] h-full bg-pp-gray-100 py-4"
+      className="flex sticky top-[72px] flex-col w-[300px] h-full bg-pp-primary-25 border-r border-pp-primary-100 py-4"
       style={{ height: "calc(100vh - 72px)" }}
     >
       <Link to={SEASON_TICKET_PATH}>
         <div
           className={classNames(
-            "flex text-sm items-center gap-2 px-4 h-[60px] ",
+            "flex text-sm items-center gap-3 px-4 h-[60px] ",
             pathname === SEASON_TICKET_PATH
               ? "bg-pp-primary-100 font-medium"
               : ""
@@ -33,7 +33,7 @@ const Sidebar = () => {
       <Link to={BOOKING_HISTORY_PATH}>
         <div
           className={classNames(
-            "flex text-sm items-center gap-2 px-4 h-[60px] ",
+            "flex text-sm items-center gap-3 px-4 h-[60px] ",
             pathname === BOOKING_HISTORY_PATH
               ? "bg-pp-primary-100 font-medium"
               : ""
