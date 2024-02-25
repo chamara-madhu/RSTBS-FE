@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import BackArrowIcon from "./../../../assets/icons/back-arrow-3095.svg";
 import Button from '../../shared/buttons/Button';
+import downloadIcon from "./../../../assets/icons/download.png";
 
 const ReviewRequestsMain = () => {
   const location = useLocation();
@@ -59,15 +60,33 @@ const ReviewRequestsMain = () => {
       <div className="flex flex-row gap-6 mt-4">
         <Button
           type="submit"
+          variant="light"
+          className="bg-gray-100 text-blue-800 border border-blue-900 px-4 py-2 rounded transition duration-300"
+        // isLoading={loading}
+        >
+          Download NIC images
+          <img src={downloadIcon} alt="Download" className="w-5 h-5" />
+        </Button>
+        <Button type="submit" variant="light"
+          // isLoading={loading}
+          className="bg-gray-100 text-blue-800 border border-blue-900 px-4 py-2 rounded transition duration-300"
+        >
+          Download GN Certificate
+          <img src={downloadIcon} alt="Download" className="w-5 h-5" />
+        </Button>
+      </div>
+      <div className="flex flex-row gap-6 mt-4">
+        <Button
+          type="submit"
           variant="primary"
-          className="w-[200px]"
+          className="w-[300px]"
         // isLoading={loading}
         >
           Accept Request
         </Button>
         <Button type="submit" variant="dark"
           // isLoading={loading}
-          className="w-[200px]"
+          className="w-[300px]"
         >
           Reject Request
         </Button>
