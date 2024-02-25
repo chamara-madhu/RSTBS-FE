@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PageHeader from "../../shared/headers/PageHeader";
 import { ADMIN_REVIEW_REQUESTS_PATH } from "../../../constant/paths";
 import { getAllPendingApplications } from "../../../api/allPendingApplications";
@@ -9,6 +9,8 @@ const NewRequestsMain = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 5;
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAllPendingApplications()
@@ -40,7 +42,12 @@ const NewRequestsMain = () => {
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // Reset current page when search query changes
+    setCurrentPage(1);
+  };
+
+  const handleReviewClick = (request) => {
+    setSelectedRequest(request);
+    navigate(ADMIN_REVIEW_REQUESTS_PATH, { state: { selectedRequest: request } });
   };
 
   return (
@@ -78,12 +85,12 @@ const NewRequestsMain = () => {
                   <td className="px-4 py-2 border">{request.duration}</td>
                   <td className="px-4 py-2 border">{request.amount}</td>
                   <td className="px-4 py-2 border">
-                    <Link
-                      to={ADMIN_REVIEW_REQUESTS_PATH}
+                    <button
+                      onClick={() => handleReviewClick(request)}
                       className="px-4 py-2 text-white bg-blue-500 rounded-md"
                     >
                       Review
-                    </Link>
+                    </button>
                   </td>
                 </tr>
               ))}
