@@ -110,7 +110,7 @@ const SignUpLoginMain = () => {
           localStorage.setItem("user_data", JSON.stringify(res.data.user));
           setLoading(false);
           if (res.data.user.role === 0) {
-            navigate("/admin/new-requests");
+            navigate("/admin/new-applications");
           } else {
             navigate("/season-ticket");
           }
