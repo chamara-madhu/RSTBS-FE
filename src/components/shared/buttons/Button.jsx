@@ -34,7 +34,7 @@ const Button = forwardRef(function ButtonComponent(
       case "dark":
         return "bg-black text-white text-sm font-medium";
       default:
-        return "bg-[#D92D20] text-white text-sm font-medium rounded-lg";
+        return "bg-red-700 text-white text-sm font-medium";
     }
   }, [variant]);
 
