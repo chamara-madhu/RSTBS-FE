@@ -11,17 +11,19 @@ import SeasonTicket from "./pages/passenger/SeasonTicket";
 import BookingHistory from "./pages/passenger/BookingHistory";
 import { auth_token, isAdmin, isPassenger } from "./auth/auth";
 import {
-  ADMIN_ALL_APPLICATIONS_PATH,
-  ADMIN_NEW_REQUESTS_PATH,
-  ADMIN_PAYMENTS_PATH,
-  ADMIN_REVIEW_REQUESTS_PATH,
+  ADMIN_NEW_APPLICATIONS_PATH,
+  ADMIN_PENDING_PAYMENT_APPROVALS_PATH,
+  ADMIN_REVIEW_APPLICATION_PATH,
+  ADMIN_REVIEW_PAYMENT_APPROVAL_PATH,
   BOOKING_HISTORY_PATH,
+  BOOKING_PAYMENT_PATH,
   SEASON_TICKET_PATH,
 } from "./constant/paths";
-import NewRequests from "./pages/admin/NewRequests";
-import AllApplications from "./pages/admin/AllApplications";
-import Payments from "./pages/admin/Payments";
-import ReviewRequests from "./pages/admin/ReviewRequests";
+import AllNewApplications from "./pages/admin/AllNewApplications";
+import PendingPaymentApprovals from "./pages/admin/PendingPaymentApprovals";
+import ReviewNewApplication from "./pages/admin/ReviewNewApplication";
+import PendingPayments from "./pages/passenger/PendingPayments";
+import ReviewPaymentApproval from "./pages/admin/ReviewPaymentApproval";
 
 // Create a private route for clients/passengers
 const PassengerRoute = () => {
@@ -57,32 +59,55 @@ function App() {
             element={<BookingHistory />}
           />
         </Route>
-        <Route exact path={ADMIN_NEW_REQUESTS_PATH} element={<AdminRoute />}>
+        <Route exact path={BOOKING_PAYMENT_PATH} element={<PassengerRoute />}>
           <Route
             exact
-            path={ADMIN_NEW_REQUESTS_PATH}
-            element={<NewRequests />}
+            path={BOOKING_PAYMENT_PATH}
+            element={<PendingPayments />}
           />
         </Route>
         <Route
           exact
-          path={ADMIN_ALL_APPLICATIONS_PATH}
+          path={ADMIN_NEW_APPLICATIONS_PATH}
           element={<AdminRoute />}
         >
           <Route
             exact
-            path={ADMIN_ALL_APPLICATIONS_PATH}
-            element={<AllApplications />}
+            path={ADMIN_NEW_APPLICATIONS_PATH}
+            element={<AllNewApplications />}
           />
         </Route>
-        <Route exact path={ADMIN_PAYMENTS_PATH} element={<AdminRoute />}>
-          <Route exact path={ADMIN_PAYMENTS_PATH} element={<Payments />} />
-        </Route>
-        <Route exact path={ADMIN_REVIEW_REQUESTS_PATH} element={<AdminRoute />}>
+        <Route
+          exact
+          path={ADMIN_PENDING_PAYMENT_APPROVALS_PATH}
+          element={<AdminRoute />}
+        >
           <Route
             exact
-            path={ADMIN_REVIEW_REQUESTS_PATH}
-            element={<ReviewRequests />}
+            path={ADMIN_PENDING_PAYMENT_APPROVALS_PATH}
+            element={<PendingPaymentApprovals />}
+          />
+        </Route>
+        <Route
+          exact
+          path={ADMIN_REVIEW_PAYMENT_APPROVAL_PATH}
+          element={<AdminRoute />}
+        >
+          <Route
+            exact
+            path={ADMIN_REVIEW_PAYMENT_APPROVAL_PATH}
+            element={<ReviewPaymentApproval />}
+          />
+        </Route>
+        <Route
+          exact
+          path={ADMIN_REVIEW_APPLICATION_PATH}
+          element={<AdminRoute />}
+        >
+          <Route
+            exact
+            path={ADMIN_REVIEW_APPLICATION_PATH}
+            element={<ReviewNewApplication />}
           />
         </Route>
       </Routes>

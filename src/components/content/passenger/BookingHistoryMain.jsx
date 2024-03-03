@@ -6,9 +6,12 @@ import moment from "moment";
 import StatusIndicators from "../../shared/status-indicators/StatusIndicators";
 import Button from "../../shared/buttons/Button";
 import { APPLICATION_STATUSES } from "../../../constant/general";
+import { useNavigate } from "react-router-dom";
+import { BOOKING_PAYMENT_PATH } from "../../../constant/paths";
 
 const BookingHistoryMain = () => {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getMySeasonTicket()
@@ -22,6 +25,10 @@ const BookingHistoryMain = () => {
       });
   }, []);
 
+  const handlePayNowClick = (id) => {
+    navigate(`${BOOKING_PAYMENT_PATH.replace(":id", id)}`);
+  };
+
   return (
     <>
       <PageHeader title="Your booking history" />
@@ -34,7 +41,8 @@ const BookingHistoryMain = () => {
             <div className="flex justify-between w-full">
               <div>
                 <p className="mb-4 text-xs text-pp-gray-500">
-                  Season Ticket Details
+                  Booking ID:{" "}
+                  <span className="font-medium text-black">{booking._id}</span>
                 </p>
                 <div className="flex items-center gap-4">
                   <p className="text-lg font-medium">{`${moment
@@ -46,9 +54,19 @@ const BookingHistoryMain = () => {
                     .format("DD MMM YYYY")}`}</p>
                   <StatusIndicators status={booking.status} />
                 </div>
+                {booking.status === APPLICATION_STATUSES.PAYMENT_PENDING && (
+                  <p className="pt-3 text-[12px] text-pp-primary-700">
+                    ** Your application has been approved and now you can make
+                    the payments.
+                  </p>
+                )}
               </div>
               {booking.status === APPLICATION_STATUSES.PAYMENT_PENDING && (
-                <Button variant="dark" className="w-fit">
+                <Button
+                  variant="dark"
+                  className="w-fit"
+                  handleButton={() => handlePayNowClick(booking._id)}
+                >
                   Pay now
                 </Button>
               )}
