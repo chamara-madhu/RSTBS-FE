@@ -1,6 +1,6 @@
 import axios from "axios";
 import { auth_token } from "../auth/auth";
-import config from "../config.js/api";
+import config from "../config/api";
 
 export const getUserQR = () => {
   return axios({

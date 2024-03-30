@@ -1,16 +1,23 @@
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
-import UserImg from "../../assets/images/user.png";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const user = localStorage.getItem("user_data")
+    ? JSON.parse(localStorage.getItem("user_data"))
+    : {
+        fName: "",
+        lName: "",
+      };
+
   const handleLogout = () => {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user_data");
 
     navigate("/");
   };
+
   return (
     <nav className="sticky top-0 z-50 bg-black shadow-lg">
       <div className="w-full px-4">
@@ -23,21 +30,21 @@ const Navbar = () => {
                 <Menu.Button className="relative flex items-center justify-center gap-2 pl-4 text-sm bg-gray-800 rounded-full">
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
-                  <span className="text-white">Chamara</span>
-                  {1 === 1 ? (
+                  <span className="text-white">{user.fName}</span>
+                  {/* {1 === 1 ? (
                     <img
                       className="w-10 h-10 rounded-full"
                       src={UserImg}
                       alt="user profile"
                     />
-                  ) : (
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-pp-primary-100">
-                      <p className="text-sm font-medium">
-                        CM
-                        {/* {getFirstLetters(session?.user?.name)} */}
-                      </p>
-                    </div>
-                  )}
+                  ) : ( */}
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-pp-primary-100">
+                    <p className="text-sm font-medium">
+                      {user.fName?.[0]?.toUpperCase()}
+                      {user.lName?.[0]?.toUpperCase()}
+                    </p>
+                  </div>
+                  {/* )} */}
                 </Menu.Button>
               </div>
               <Transition

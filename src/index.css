@@ -15,3 +15,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.highlight {
+  background: #7f56d9 !important;
+  color: #ffffff !important;
+}

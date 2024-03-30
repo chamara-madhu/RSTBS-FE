@@ -7,7 +7,7 @@ import {
   getAnPendingPaymentApproval,
 } from "../../../api/applicationAPIs";
 import PageHeader from "../../shared/headers/PageHeader";
-import config from "../../../config.js/api";
+import config from "../../../config/api";
 import PreLoading from "../../shared/loading/PreLoading";
 import { APPLICATION_STATUSES } from "../../../constant/general";
 import { ADMIN_PENDING_PAYMENT_APPROVALS_PATH } from "../../../constant/paths";

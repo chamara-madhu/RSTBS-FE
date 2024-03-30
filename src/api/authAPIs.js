@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../config.js/api";
+import config from "../config/api";
 
 export const loginAPI = (data) => {
   return axios.post(`${config.API_URL}/v1/api/auth/login`, data);

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Button from "../../shared/buttons/Button";
 import Input from "../../shared/fields/Input";
 import PageHeader from "../../shared/headers/PageHeader";
@@ -10,7 +10,17 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { getUserQR } from "../../../api/userAPI";
 import PreLoading from "../../shared/loading/PreLoading";
-import config from "../../../config.js/api";
+import config from "../../../config/api";
+import google from "../../../config/google";
+// import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image";
+import {
+  APIProvider,
+  Map,
+  useMap,
+  useMapsLibrary,
+} from "@vis.gl/react-google-maps";
+import Directions from "./Directions";
 
 const SeasonTicketMain = () => {
   const [user, setUser] = useState(null);
@@ -43,8 +53,10 @@ const SeasonTicketMain = () => {
     stationsErr: "",
     durationErr: "",
   });
+  const [fee, setFee] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     getUserQR()
@@ -200,6 +212,7 @@ const SeasonTicketMain = () => {
       formData.set("destination", form.destination);
       formData.set("start", form.start);
       formData.set("end", form.end);
+      formData.set("amount", fee);
       formData.append("nicFS", files.nicFS);
       formData.append("nicBS", files.nicBS);
       formData.append("gnCert", files.gnCert);
@@ -223,6 +236,22 @@ const SeasonTicketMain = () => {
     }));
   };
 
+  const handleDownload = () => {
+    setLoading(true);
+
+    const node = document.getElementById("my-node");
+    domtoimage
+      .toPng(node)
+      .then(function (dataUrl) {
+        var img = new Image();
+        img.src = dataUrl;
+        document.body.appendChild(img);
+      })
+      .catch(function (error) {
+        console.error("oops, something went wrong!", error);
+      });
+  };
+
   return (
     <>
       <PageHeader
@@ -230,37 +259,29 @@ const SeasonTicketMain = () => {
           user?.qr ? "Your QR code" : "Online application for season ticket"
         }
       />
-      <div className="w-1/2 mb-6">
-        {preLoading ? (
-          <PreLoading />
-        ) : user.qr ? (
-          <div>
+      {preLoading ? (
+        <PreLoading />
+      ) : !user.qr ? (
+        <div className="w-full mb-6">
+          <div className="flex flex-col items-center justify-center w-full gap-5">
             {user?.nic && (
               <table className="table-fixed">
                 <tbody className="text-sm">
                   <tr>
                     <td className="py-2 font-medium text-left">Full name</td>
-                    <td className="px-4 py-2 text-left">
-                      {user.fullName}
-                    </td>
+                    <td className="px-4 py-2 text-left">{user.fullName}</td>
                   </tr>
                   <tr>
                     <td className="py-2 font-medium text-left">NIC</td>
-                    <td className="px-4 py-2 text-left">
-                      {user.nic}
-                    </td>
+                    <td className="px-4 py-2 text-left">{user.nic}</td>
                   </tr>
                   <tr>
                     <td className="py-2 font-medium text-left">Address</td>
-                    <td className="px-4 py-2 text-left">
-                      {user.address}
-                    </td>
+                    <td className="px-4 py-2 text-left">{user.address}</td>
                   </tr>
                   <tr>
                     <td className="py-2 font-medium text-left">Phone</td>
-                    <td className="px-4 py-2 text-left">
-                      {user.phone}
-                    </td>
+                    <td className="px-4 py-2 text-left">{user.phone}</td>
                   </tr>
                   <tr>
                     <td className="py-2 font-medium text-left">
@@ -281,182 +302,237 @@ const SeasonTicketMain = () => {
                 </tbody>
               </table>
             )}
-            <img
-              src={`${config.S3_PUBLIC_URL}/${user?.qr}`}
-              alt="QR"
-              className="w-[300px] border rounded-lg"
-            />
+            <div
+              className="flex flex-col items-center justify-center gap-4 w-[340px] border rounded-lg p-5"
+              // ref={canvasRef}
+              id="my-node"
+            >
+              <img
+                src={`${config.S3_PUBLIC_URL}/${user?.qr}`}
+                alt="QR"
+                className="w-[300px] border rounded-lg"
+              />
+              <p className="text-lg font-medium text-center">
+                Neluwe Liyanage Chamara Madhushanka Gunathilaka
+              </p>
+              <p className="text-sm text-center">933110443V</p>
+            </div>
+
+            <Button
+              type="submit"
+              variant="dark"
+              className="w-[200px]"
+              isLoading={loading}
+              handleButton={handleDownload}
+            >
+              Download
+            </Button>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-7">
-              <Input
-                label="First name"
-                name="fullName"
-                value={form.fullName}
-                handleChange={handleChange}
-                error={form.fullNameErr}
-                showRequiredLabel
-              />
-              <Input
-                label="Address"
-                name="address"
-                value={form.address}
-                handleChange={handleChange}
-                error={form.addressErr}
-                showRequiredLabel
-              />
-              <Input
-                label="NIC number"
-                name="nic"
-                value={form.nic}
-                handleChange={handleChange}
-                error={form.nicErr}
-                placeholder="E.g. 933110443V / 199315478985"
-                showRequiredLabel
-              />
-
-              <Phone
-                label="Phone"
-                value={form.phone}
-                handlePhone={handlePhone}
-                showRequiredLabel
-                error={form.phoneErr}
-              />
-
-              <div className="flex items-center flex-auto gap-6">
-                <TypeOrSelect
-                  isClearable
-                  label="Station origin"
-                  name="origin"
-                  // getApi={(name) => CategoryService.getCategoryByName(name)}
-                  labelClass="tracking-[0.28px] text-pp-gray-700"
-                  className="flex-1 w-full"
-                  onChange={handleChange}
-                  options={[
-                    {
-                      label: "Kandy",
-                      value: "Kandy",
-                    },
-                  ]}
-                  value={form.origin}
-                  placeholder="E.g. Kandy"
-                  error={form.originErr}
-                  showRequiredLabel
-                />
-                <TypeOrSelect
-                  isClearable
-                  label="Destination origin"
-                  name="destination"
-                  // getApi={(name) => CategoryService.getCategoryByName(name)}
-                  labelClass="tracking-[0.28px] text-pp-gray-700"
-                  className="flex-1 w-full"
-                  onChange={handleChange}
-                  options={[
-                    {
-                      label: "Colombo",
-                      value: "Colombo",
-                    },
-                  ]}
-                  value={form.destination}
-                  placeholder="E.g. Colombo"
-                  error={form.destinationErr}
-                  showRequiredLabel
-                />
-              </div>
-
-              <div className="flex items-center flex-auto gap-6">
+        </div>
+      ) : (
+        <div className="relative flex gap-6">
+          <div className="w-1/2 mb-6">
+            <form onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-7">
                 <Input
-                  type="date"
-                  label="Start date"
-                  name="start"
-                  value={form.start}
-                  min={moment().add(1, "day").format("YYYY-MM-DD")}
-                  max={moment().add(7, "day").format("YYYY-MM-DD")}
+                  label="First name"
+                  name="fullName"
+                  value={form.fullName}
                   handleChange={handleChange}
-                  error={form.startErr}
+                  error={form.fullNameErr}
                   showRequiredLabel
                 />
                 <Input
-                  type="date"
-                  label="End date"
-                  name="end"
-                  value={form.end}
-                  min={moment(form.start).add(1, "months").format("YYYY-MM-DD")}
-                  max={moment(form.start).add(6, "months").format("YYYY-MM-DD")}
+                  label="Address"
+                  name="address"
+                  value={form.address}
                   handleChange={handleChange}
-                  error={form.endErr}
+                  error={form.addressErr}
                   showRequiredLabel
                 />
-              </div>
+                <Input
+                  label="NIC number"
+                  name="nic"
+                  value={form.nic}
+                  handleChange={handleChange}
+                  error={form.nicErr}
+                  placeholder="E.g. 933110443V / 199315478985"
+                  showRequiredLabel
+                />
 
-              <div className="flex flex-col">
-                <p className="mb-1 font-bold text-md">Upload your NIC</p>
-                <p className="mb-4 text-xs text-pp-gray-500">
-                  Upload the both sides of your NIC
-                </p>
+                <Phone
+                  label="Phone"
+                  value={form.phone}
+                  handlePhone={handlePhone}
+                  showRequiredLabel
+                  error={form.phoneErr}
+                />
+
                 <div className="flex items-center flex-auto gap-6">
-                  <ImageUpload
-                    label="Front side"
-                    name="nicFS"
-                    value={files.nicFS}
-                    existingValue={""}
-                    handleFile={handleFile}
-                    error={files.nicFSErr}
-                    removeImage={removeImage}
+                  <TypeOrSelect
+                    isClearable
+                    label="Station origin"
+                    name="origin"
+                    // getApi={(name) => CategoryService.getCategoryByName(name)}
+                    labelClass="tracking-[0.28px] text-pp-gray-700"
+                    className="flex-1 w-full"
+                    onChange={handleChange}
+                    options={[
+                      {
+                        label: "Kandy",
+                        value: "Kandy",
+                      },
+                    ]}
+                    value={form.origin}
+                    placeholder="E.g. Kandy"
+                    error={form.originErr}
                     showRequiredLabel
                   />
-                  <ImageUpload
-                    label="Back side"
-                    name="nicBS"
-                    value={files.nicBS}
-                    existingValue={""}
-                    handleFile={handleFile}
-                    removeImage={removeImage}
-                    error={files.nicBSErr}
+                  <TypeOrSelect
+                    isClearable
+                    label="Destination origin"
+                    name="destination"
+                    // getApi={(name) => CategoryService.getCategoryByName(name)}
+                    labelClass="tracking-[0.28px] text-pp-gray-700"
+                    className="flex-1 w-full"
+                    onChange={handleChange}
+                    options={[
+                      {
+                        label: "Colombo",
+                        value: "Colombo",
+                      },
+                    ]}
+                    value={form.destination}
+                    placeholder="E.g. Colombo"
+                    error={form.destinationErr}
                     showRequiredLabel
                   />
                 </div>
-              </div>
 
-              <div className="flex flex-col">
-                <p className="mb-1 font-bold text-md">
-                  Upload the Grama Niladari certification *
-                </p>
-                <p className="mb-4 text-xs text-pp-gray-500">
-                  Upload the GN certification here.
-                </p>
-
-                <div className="flex items-center flex-auto">
-                  <ImageUpload
-                    name="gnCert"
-                    value={files.gnCert}
-                    existingValue={form.avatar || ""}
-                    handleFile={handleFile}
-                    error={files.gnCertErr}
-                    height="400px"
-                    removeImage={removeImage}
+                <div className="flex items-center flex-auto gap-6">
+                  <Input
+                    type="date"
+                    label="Start date"
+                    name="start"
+                    value={form.start}
+                    min={moment().add(1, "day").format("YYYY-MM-DD")}
+                    max={moment().add(7, "day").format("YYYY-MM-DD")}
+                    handleChange={handleChange}
+                    error={form.startErr}
+                    showRequiredLabel
+                  />
+                  <Input
+                    type="date"
+                    label="End date"
+                    name="end"
+                    value={form.end}
+                    min={moment(form.start)
+                      .add(1, "months")
+                      .format("YYYY-MM-DD")}
+                    max={moment(form.start)
+                      .add(6, "months")
+                      .format("YYYY-MM-DD")}
+                    handleChange={handleChange}
+                    error={form.endErr}
+                    showRequiredLabel
                   />
                 </div>
-              </div>
 
-              <div className="flex flex-row gap-2 mt-4">
-                <Button
-                  type="submit"
-                  variant="dark"
-                  className="w-[200px]"
-                  isLoading={loading}
-                >
-                  Submit for approval
-                </Button>
-                {/* <Button type="submit" variant="light" isLoading={loading}>
+                <div className="flex flex-col">
+                  <p className="mb-1 font-bold text-md">Upload your NIC</p>
+                  <p className="mb-4 text-xs text-pp-gray-500">
+                    Upload the both sides of your NIC
+                  </p>
+                  <div className="flex items-center flex-auto gap-6">
+                    <ImageUpload
+                      label="Front side"
+                      name="nicFS"
+                      value={files.nicFS}
+                      existingValue={""}
+                      handleFile={handleFile}
+                      error={files.nicFSErr}
+                      removeImage={removeImage}
+                      showRequiredLabel
+                    />
+                    <ImageUpload
+                      label="Back side"
+                      name="nicBS"
+                      value={files.nicBS}
+                      existingValue={""}
+                      handleFile={handleFile}
+                      removeImage={removeImage}
+                      error={files.nicBSErr}
+                      showRequiredLabel
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <p className="mb-1 font-bold text-md">
+                    Upload the Grama Niladari certification *
+                  </p>
+                  <p className="mb-4 text-xs text-pp-gray-500">
+                    Upload the GN certification here.
+                  </p>
+
+                  <div className="flex items-center flex-auto">
+                    <ImageUpload
+                      name="gnCert"
+                      value={files.gnCert}
+                      existingValue={form.avatar || ""}
+                      handleFile={handleFile}
+                      error={files.gnCertErr}
+                      height="400px"
+                      removeImage={removeImage}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-lg font-semibold">Season ticket fee</p>
+                  <p className="text-sm">LKR. {fee.toFixed(2)}</p>
+                </div>
+
+                <div className="flex flex-row gap-2 mt-4">
+                  <Button
+                    type="submit"
+                    variant="dark"
+                    className="w-[200px]"
+                    isLoading={loading}
+                  >
+                    Submit for approval
+                  </Button>
+                  {/* <Button type="submit" variant="light" isLoading={loading}>
               Cancel
             </Button> */}
+                </div>
               </div>
-            </div>
-          </form>
-        )}
-      </div>
+            </form>
+          </div>
+          <div
+            className="sticky top-[173px] w-1/2 mb-6 bg-gray-200 h-screen"
+            style={{ height: "calc(100vh - 200px)" }}
+          >
+            <APIProvider apiKey="AIzaSyBN6Av2lILAbtNodjByIDMrOUAupBuOBeQ">
+              {/* {google.GOOGLE_API_KEY}> */}
+              <Map
+                defaultCenter={{ lat: 6.927079, lng: 79.861244 }}
+                defaultZoom={9}
+                gestureHandling={"greedy"}
+                disableDefaultUI={true}
+              >
+                <Directions
+                  origin={form.origin}
+                  destination={form.destination}
+                  start={form.start}
+                  end={form.end}
+                  setFee={setFee}
+                />
+              </Map>
+            </APIProvider>
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -1,11 +1,11 @@
 import axios from "axios";
 import { auth_token } from "../auth/auth";
-import config from "../config.js/api";
+import config from "../config/api";
 
 export const applyForSeasonTicket = (data) => {
   return axios({
     method: "post",
-    url: `${config.API_URL}/v1/api/season-tickets/apply`,
+    url: `${config.API_URL}/v1/api/applications/apply`,
     data: data,
     headers: {
       "Content-Type": "multipart/form-data",
@@ -17,7 +17,7 @@ export const applyForSeasonTicket = (data) => {
 export const getAllPendingApplications = () => {
   return axios({
     method: "get",
-    url: `${config.API_URL}/v1/api/season-tickets/all-pending-applications`,
+    url: `${config.API_URL}/v1/api/applications/all-pending-applications`,
     headers: {
       Authorization: `Bearer ${auth_token()}`,
     },
@@ -27,7 +27,7 @@ export const getAllPendingApplications = () => {
 export const getAllPendingPaymentApprovals = () => {
   return axios({
     method: "get",
-    url: `${config.API_URL}/v1/api/season-tickets/all-pending-payment-approvals`,
+    url: `${config.API_URL}/v1/api/applications/all-pending-payment-approvals`,
     headers: {
       Authorization: `Bearer ${auth_token()}`,
     },
@@ -37,7 +37,7 @@ export const getAllPendingPaymentApprovals = () => {
 export const getAnPendingApplication = (id) => {
   return axios({
     method: "get",
-    url: `${config.API_URL}/v1/api/season-tickets/pending-application/${id}`,
+    url: `${config.API_URL}/v1/api/applications/pending-application/${id}`,
     headers: {
       Authorization: `Bearer ${auth_token()}`,
     },
@@ -47,7 +47,7 @@ export const getAnPendingApplication = (id) => {
 export const getAnPendingPaymentApproval = (id) => {
   return axios({
     method: "get",
-    url: `${config.API_URL}/v1/api/season-tickets/pending-payment-approval/${id}`,
+    url: `${config.API_URL}/v1/api/applications/pending-payment-approval/${id}`,
     headers: {
       Authorization: `Bearer ${auth_token()}`,
     },
@@ -57,7 +57,7 @@ export const getAnPendingPaymentApproval = (id) => {
 export const acceptOrRejectApplication = (id, status, note) => {
   return axios({
     method: "post",
-    url: `${config.API_URL}/v1/api/season-tickets/accept-or-reject-application`,
+    url: `${config.API_URL}/v1/api/applications/accept-or-reject-application`,
     data: {
       id,
       status,
@@ -72,7 +72,7 @@ export const acceptOrRejectApplication = (id, status, note) => {
 export const getPendingPaymentInfo = (id) => {
   return axios({
     method: "get",
-    url: `${config.API_URL}/v1/api/season-tickets/payment-info/${id}`,
+    url: `${config.API_URL}/v1/api/applications/payment-info/${id}`,
     headers: {
       Authorization: `Bearer ${auth_token()}`,
     },
@@ -82,7 +82,7 @@ export const getPendingPaymentInfo = (id) => {
 export const uploadBankSlip = (data) => {
   return axios({
     method: "post",
-    url: `${config.API_URL}/v1/api/season-tickets/upload-bank-slips`,
+    url: `${config.API_URL}/v1/api/applications/upload-bank-slips`,
     data: data,
     headers: {
       "Content-Type": "multipart/form-data",
@@ -94,7 +94,7 @@ export const uploadBankSlip = (data) => {
 export const acceptOrRejectPayment = (id, status, note) => {
   return axios({
     method: "post",
-    url: `${config.API_URL}/v1/api/season-tickets/accept-or-reject-payment-approval`,
+    url: `${config.API_URL}/v1/api/applications/accept-or-reject-payment-approval`,
     data: {
       id,
       status,

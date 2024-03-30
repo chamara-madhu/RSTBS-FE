@@ -17,6 +17,7 @@ import {
   ADMIN_REVIEW_PAYMENT_APPROVAL_PATH,
   BOOKING_HISTORY_PATH,
   BOOKING_PAYMENT_PATH,
+  BOOKING_USAGE_PATH,
   SEASON_TICKET_PATH,
 } from "./constant/paths";
 import AllNewApplications from "./pages/admin/AllNewApplications";
@@ -24,6 +25,7 @@ import PendingPaymentApprovals from "./pages/admin/PendingPaymentApprovals";
 import ReviewNewApplication from "./pages/admin/ReviewNewApplication";
 import PendingPayments from "./pages/passenger/PendingPayments";
 import ReviewPaymentApproval from "./pages/admin/ReviewPaymentApproval";
+import BookingUsage from "./pages/passenger/BookingUsage";
 
 // Create a private route for clients/passengers
 const PassengerRoute = () => {
@@ -58,6 +60,9 @@ function App() {
             path={BOOKING_HISTORY_PATH}
             element={<BookingHistory />}
           />
+        </Route>
+        <Route exact path={BOOKING_USAGE_PATH} element={<PassengerRoute />}>
+          <Route exact path={BOOKING_USAGE_PATH} element={<BookingUsage />} />
         </Route>
         <Route exact path={BOOKING_PAYMENT_PATH} element={<PassengerRoute />}>
           <Route
