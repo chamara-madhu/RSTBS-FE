@@ -15,8 +15,10 @@ import {
   ADMIN_PENDING_PAYMENT_APPROVALS_PATH,
   ADMIN_REVIEW_APPLICATION_PATH,
   ADMIN_REVIEW_PAYMENT_APPROVAL_PATH,
+  APPLICATION_RE_SUBMISSION_PATH,
   BOOKING_HISTORY_PATH,
   BOOKING_PAYMENT_PATH,
+  BOOKING_RENEW_PATH,
   BOOKING_USAGE_PATH,
   SEASON_TICKET_PATH,
 } from "./constant/paths";
@@ -26,33 +28,51 @@ import ReviewNewApplication from "./pages/admin/ReviewNewApplication";
 import PendingPayments from "./pages/passenger/PendingPayments";
 import ReviewPaymentApproval from "./pages/admin/ReviewPaymentApproval";
 import BookingUsage from "./pages/passenger/BookingUsage";
+import SeasonTicketReSubmission from "./pages/passenger/SeasonTicketReSubmission";
+import RenewSeasonTicket from "./pages/passenger/RenewSeasonTicket";
 
-// Create a private route for clients/passengers
+// Create a private route for passengers
 const PassengerRoute = () => {
   return auth_token() && isPassenger() ? <Outlet /> : <Navigate to="/" />;
 };
 
+// Create a private route for admins
 const AdminRoute = () => {
   return auth_token() && isAdmin() ? <Outlet /> : <Navigate to="/" />;
 };
 
-// Define the login route
-const LoginRoute = ({ element: Element, ...rest }) => (
-  <Route
-    {...rest}
-    element={
-      auth_token() ? <Navigate to="/my-account/my-ads" replace /> : <Element />
-    }
-  />
-);
+const LoginRoute = () => {
+  return auth_token() ? (
+    isAdmin() ? (
+      <Navigate to={ADMIN_NEW_APPLICATIONS_PATH} />
+    ) : (
+      <Navigate to={SEASON_TICKET_PATH} />
+    )
+  ) : (
+    <Outlet />
+  );
+};
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<SignUpLogin />} />
+        <Route exact path="/" element={<LoginRoute />}>
+          <Route exact path="/" element={<SignUpLogin />} />
+        </Route>
         <Route exact path={SEASON_TICKET_PATH} element={<PassengerRoute />}>
           <Route exact path={SEASON_TICKET_PATH} element={<SeasonTicket />} />
+        </Route>
+        <Route
+          exact
+          path={APPLICATION_RE_SUBMISSION_PATH}
+          element={<PassengerRoute />}
+        >
+          <Route
+            exact
+            path={APPLICATION_RE_SUBMISSION_PATH}
+            element={<SeasonTicketReSubmission />}
+          />
         </Route>
         <Route exact path={BOOKING_HISTORY_PATH} element={<PassengerRoute />}>
           <Route
@@ -69,6 +89,13 @@ function App() {
             exact
             path={BOOKING_PAYMENT_PATH}
             element={<PendingPayments />}
+          />
+        </Route>
+        <Route exact path={BOOKING_RENEW_PATH} element={<PassengerRoute />}>
+          <Route
+            exact
+            path={BOOKING_RENEW_PATH}
+            element={<RenewSeasonTicket />}
           />
         </Route>
         <Route

@@ -2,10 +2,22 @@ import axios from "axios";
 import { auth_token } from "../auth/auth";
 import config from "../config/api";
 
-export const applyForSeasonTicket = (data) => {
+export const submitApplication = (data) => {
   return axios({
     method: "post",
     url: `${config.API_URL}/v1/api/applications/apply`,
+    data: data,
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${auth_token()}`,
+    },
+  });
+};
+
+export const reSubmitApplication = (data) => {
+  return axios({
+    method: "put",
+    url: `${config.API_URL}/v1/api/applications/update`,
     data: data,
     headers: {
       "Content-Type": "multipart/form-data",

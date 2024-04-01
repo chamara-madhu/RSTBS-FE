@@ -19,7 +19,7 @@ const Button = forwardRef(function ButtonComponent(
     switch (variant) {
       case "light":
         return `
-              outline-none bg-white shadow-xs border border-black text-black text-sm font-medium
+              outline-none bg-white shadow-xs border border-gray-400 text-gray-400 text-sm font-medium
               hover:border-black hover:bg-pp-gray-50 hover:text-pp-gray-800
               focus:border-black focus:bg-white focus:text-black
               disabled:border-pp-gray-200 disabled:bg-white disabled:text-black

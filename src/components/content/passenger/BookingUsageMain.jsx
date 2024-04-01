@@ -10,11 +10,6 @@ import { useParams } from "react-router-dom";
 
 const BookingUsageMain = () => {
   const [booking, setBooking] = useState(null);
-  const [selectedDates, setSelectedDates] = useState([
-    "12-03-2024",
-    "16-03-2024",
-    "22-03-2024",
-  ]);
   const [preLoading, setPreLoading] = useState(true);
   const { id } = useParams();
 
@@ -43,9 +38,9 @@ const BookingUsageMain = () => {
               <Calendar
                 tileClassName={({ date, view }) => {
                   if (
-                    booking?.dates?.find(
-                      (x) => x === moment(date).format("DD-MM-YYYY")
-                    )
+                    booking?.dates?.find((x) => {
+                      return x === moment(date).format("YYYY-MM-DD");
+                    })
                   ) {
                     return "highlight";
                   }

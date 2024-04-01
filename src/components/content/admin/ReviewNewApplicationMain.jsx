@@ -12,12 +12,13 @@ import config from "../../../config/api";
 import PreLoading from "../../shared/loading/PreLoading";
 import { APPLICATION_STATUSES } from "../../../constant/general";
 import { ADMIN_NEW_APPLICATIONS_PATH } from "../../../constant/paths";
+import ApplicationRejectionModal from "./modals/ApplicationRejectionModal";
 
 const ReviewNewApplicationMain = () => {
   const [data, setData] = useState(null);
+  const [isOpenRejectionModal, setIsOpenRejectionModal] = useState(false);
   const [preLoading, setPreLoading] = useState(true);
   const [loadingAccept, setLoadingAccept] = useState(false);
-  const [loadingReject, setLoadingReject] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -33,23 +34,17 @@ const ReviewNewApplicationMain = () => {
       });
   }, [id]);
 
-  const acceptRejectApplication = (id, status, note = null) => {
-    if (note) {
-      setLoadingReject(true);
-    } else {
-      setLoadingAccept(true);
-    }
+  const acceptApplication = (id) => {
+    setLoadingAccept(true);
 
-    acceptOrRejectApplication(id, status, note)
+    acceptOrRejectApplication(id, APPLICATION_STATUSES.PAYMENT_PENDING, null)
       .then(() => {
         setLoadingAccept(false);
-        setLoadingReject(false);
         navigate(ADMIN_NEW_APPLICATIONS_PATH);
       })
       .catch((err) => {
         console.error("Error fetching data:", err);
         setLoadingAccept(false);
-        setLoadingReject(false);
       });
   };
 
@@ -105,9 +100,7 @@ const ReviewNewApplicationMain = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2 font-medium text-left">
-                      Start duration
-                    </td>
+                    <td className="py-2 font-medium text-left">Start date</td>
                     <td className="px-4 py-2 text-left">
                       {moment
                         .utc(data.duration.start)
@@ -116,7 +109,7 @@ const ReviewNewApplicationMain = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2 font-medium text-left">End duration</td>
+                    <td className="py-2 font-medium text-left">End date</td>
                     <td className="px-4 py-2 text-left">
                       {moment
                         .utc(data.duration.end)
@@ -125,7 +118,9 @@ const ReviewNewApplicationMain = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-2 font-medium text-left">Amount (Rs.)</td>
+                    <td className="py-2 font-medium text-left">
+                      Amount (LKR.)
+                    </td>
                     <td className="px-4 py-2 text-left">
                       {data.amount.toFixed(2)}
                     </td>
@@ -139,19 +134,13 @@ const ReviewNewApplicationMain = () => {
               alt="NIC front side"
               className="w-full border rounded-xl"
             />
-            <div className="flex flex-row gap-4 mt-4">
+            <div className="flex flex-row gap-2 mt-4">
               <Button
                 type="submit"
-                variant="dark"
+                variant="primary"
                 className="w-[150px]"
                 isLoading={loadingAccept}
-                handleButton={() =>
-                  acceptRejectApplication(
-                    data._id,
-                    APPLICATION_STATUSES.PAYMENT_PENDING,
-                    null
-                  )
-                }
+                handleButton={() => acceptApplication(data._id)}
               >
                 <Check size={16} /> Accept
               </Button>
@@ -159,20 +148,13 @@ const ReviewNewApplicationMain = () => {
                 type="submit"
                 variant="danger"
                 className="w-[150px]"
-                isLoading={loadingReject}
-                handleButton={() =>
-                  acceptRejectApplication(
-                    data._id,
-                    APPLICATION_STATUSES.APPLICATION_REJECTED,
-                    "Test"
-                  )
-                }
+                handleButton={() => setIsOpenRejectionModal(true)}
               >
                 <X size={16} /> Reject
               </Button>
             </div>
           </div>
-          <div className="sticky top-0 flex flex-col gap-4 w-[400px]">
+          <div className="sticky top-[173px] flex flex-col gap-4 w-[400px] h-screen">
             <img
               src={`${config.S3_PUBLIC_URL}/${data?.applicationId?.nicImages?.fs}`}
               alt="NIC front side"
@@ -186,6 +168,12 @@ const ReviewNewApplicationMain = () => {
           </div>
         </div>
       )}
+
+      <ApplicationRejectionModal
+        isOpenRejectionModal={isOpenRejectionModal}
+        setIsOpenRejectionModal={setIsOpenRejectionModal}
+        id={data?._id}
+      />
     </>
   );
 };

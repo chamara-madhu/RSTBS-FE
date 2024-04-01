@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Button from "../../shared/buttons/Button";
 import Input from "../../shared/fields/Input";
 import PageHeader from "../../shared/headers/PageHeader";
 import Phone from "../../shared/fields/Phone";
 import TypeOrSelect from "../../shared/fields/TypeOrSelect";
 import ImageUpload from "../../shared/upload/ImageUpload";
-import { submitApplication } from "../../../api/applicationAPIs";
+import { reSubmitApplication } from "../../../api/applicationAPIs";
 import moment from "moment";
-import { useNavigate } from "react-router-dom";
-import { getUserQR } from "../../../api/userAPI";
+import { useNavigate, useParams } from "react-router-dom";
 import PreLoading from "../../shared/loading/PreLoading";
 import config from "../../../config/api";
 import {
@@ -18,25 +17,25 @@ import {
   useMapsLibrary,
 } from "@vis.gl/react-google-maps";
 import Directions from "./Directions";
-import { getSeasonTicketHistory } from "../../../api/seasonTicketAPI";
+import { getSeasonTicket } from "../../../api/seasonTicketAPI";
 import { getAllStations } from "../../../api/stationAPI";
-import { Download } from "feather-icons-react";
-import html2PDF from "jspdf-html2canvas";
 
-const SeasonTicketMain = () => {
-  const [qr, setQr] = useState(null);
-  const [user, setUser] = useState(null);
-  const [seasonTicketHistory, setSeasonTicketHistory] = useState(null);
+const SeasonTicketReSubmissionMain = () => {
   const [preLoading, setPreLoading] = useState(true);
   const [files, setFiles] = useState({
     nicFS: null,
+    nicFSUrl: null,
     nicBS: null,
+    nicBSUrl: null,
     gnCert: null,
+    gnCertUrl: null,
     nicFSErr: "",
     nicBSErr: "",
     gnCertErr: "",
   });
   const [form, setForm] = useState({
+    applicationId: "",
+    seasonTicketId: "",
     fullName: "",
     address: "",
     nic: "",
@@ -59,34 +58,8 @@ const SeasonTicketMain = () => {
   const [fee, setFee] = useState(0);
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    Promise.all([getUserQR(), getSeasonTicketHistory()])
-      .then(([userRes, seasonTicketRes]) => {
-        setUser(userRes.data);
-        setSeasonTicketHistory(seasonTicketRes.data);
-        setPreLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setPreLoading(false); // Make sure preLoading is set to false even if there's an error
-      });
-  }, []);
-
-  useEffect(() => {
-    if (user?.qr) {
-      // Fetch the remote file as blob
-      fetch(`${config.S3_PUBLIC_URL}/${user.qr}`)
-        .then((response) => response.blob())
-        .then((blob) => {
-          // Now 'blob' contains the content of the remote file as a Blob
-          console.log(blob);
-          setQr(blob);
-        })
-        .catch((error) => console.error("Error fetching the file:", error));
-    }
-  }, [user?.qr]);
 
   useEffect(() => {
     getAllStations()
@@ -104,6 +77,40 @@ const SeasonTicketMain = () => {
         console.log(err);
       });
   }, []);
+
+  useEffect(() => {
+    getSeasonTicket(id)
+      .then((res) => {
+        setForm((prevForm) => ({
+          ...prevForm,
+          applicationId: res.data.applicationId._id,
+          seasonTicketId: res.data._id,
+          fullName: res.data.applicationId.fullName,
+          address: res.data.applicationId.address,
+          nic: res.data.applicationId.nic,
+          phone: res.data.applicationId.phone,
+          origin: res.data.applicationId.stations.origin,
+          destination: res.data.applicationId.stations.destination,
+          start: moment
+            .utc(res.data.duration.start)
+            .local()
+            .format("YYYY-MM-DD"),
+          end: moment.utc(res.data.duration.end).local().format("YYYY-MM-DD"),
+        }));
+        setFiles((file) => ({
+          ...file,
+          nicFSUrl: `${config.S3_PUBLIC_URL}/${res?.data?.applicationId?.nicImages?.fs}`,
+          nicBSUrl: `${config.S3_PUBLIC_URL}/${res?.data?.applicationId?.nicImages?.bs}`,
+          gnCertUrl: `${config.S3_PUBLIC_URL}/${res?.data?.applicationId?.gnCertificate}`,
+        }));
+        setFee(res.data.amount);
+        setPreLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setPreLoading(false);
+      });
+  }, [id]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -184,15 +191,15 @@ const SeasonTicketMain = () => {
       endErr = "Station end is required";
     }
 
-    if (!files.nicFS) {
+    if (!files.nicFSUrl && !files.nicFS) {
       nicFSErr = "NIC front side is required";
     }
 
-    if (!files.nicBS) {
+    if (!files.nicBSUrl && !files.nicBS) {
       nicBSErr = "NIC back side is required";
     }
 
-    if (!files.gnCert) {
+    if (!files.gnCertUrl && !files.gnCert) {
       gnCertErr = "GN certification is required";
     }
 
@@ -240,6 +247,8 @@ const SeasonTicketMain = () => {
       setLoading(true);
 
       const formData = new FormData();
+      formData.set("applicationId", form.applicationId);
+      formData.set("seasonTicketId", form.seasonTicketId);
       formData.set("fullName", form.fullName);
       formData.set("address", form.address);
       formData.set("nic", form.nic);
@@ -250,11 +259,17 @@ const SeasonTicketMain = () => {
       formData.set("end", form.end);
       formData.set("amount", fee);
       formData.set("km", 5);
-      formData.append("nicFS", files.nicFS);
-      formData.append("nicBS", files.nicBS);
-      formData.append("gnCert", files.gnCert);
+      if (files?.nicFS) {
+        formData.append("nicFS", files.nicFS);
+      }
+      if (files?.nicBS) {
+        formData.append("nicBS", files.nicBS);
+      }
+      if (files?.gnCert) {
+        formData.append("gnCert", files.gnCert);
+      }
 
-      submitApplication(formData)
+      reSubmitApplication(formData)
         .then(() => {
           setLoading(false);
           navigate("/booking-history");
@@ -269,106 +284,16 @@ const SeasonTicketMain = () => {
     setFiles((file) => ({
       ...file,
       [name]: null,
+      [name + "Url"]: null,
       [name + "Err"]: "",
     }));
   };
 
-  const handleDownload = () => {
-    setLoading(true);
-
-    const node = document.getElementById("my-node");
-
-    html2PDF(node, {
-      jsPDF: {
-        format: "a6",
-      },
-      imageType: "image/jpeg",
-      output: "./pdf/generate.pdf",
-    });
-
-    setLoading(false);
-  };
-
   return (
     <>
-      <PageHeader
-        title={
-          user?.qr ? "Your QR code" : "Online application for season ticket"
-        }
-      />
+      <PageHeader title="Application Re-submission" showBack />
       {preLoading ? (
         <PreLoading />
-      ) : user?.qr && qr ? (
-        <div className="flex w-full gap-4 mb-6">
-          <div className="flex flex-col items-center justify-center gap-5">
-            <div
-              className="flex flex-col items-center justify-center gap-4 w-[340px] border rounded-lg p-5"
-              id="my-node"
-            >
-              <img
-                src={URL.createObjectURL(qr)}
-                alt="QR"
-                className="w-[300px] border rounded-lg"
-              />
-              <p className="text-lg font-medium text-center">
-                Neluwe Liyanage Chamara Madhushanka Gunathilaka
-              </p>
-              <p className="text-sm text-center">933110443V</p>
-            </div>
-
-            <Button
-              type="submit"
-              variant="dark"
-              className="w-[200px]"
-              isLoading={loading}
-              handleButton={handleDownload}
-            >
-              <Download size={16} /> Download
-            </Button>
-          </div>
-          <div>
-            {user?.nic && (
-              <table className="table-fixed">
-                <tbody className="text-sm">
-                  <tr>
-                    <td className="py-2 font-medium text-left">Full name</td>
-                    <td className="px-4 py-2 text-left">{user.fullName}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 font-medium text-left">NIC</td>
-                    <td className="px-4 py-2 text-left">{user.nic}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 font-medium text-left">Address</td>
-                    <td className="px-4 py-2 text-left">{user.address}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 font-medium text-left">Phone</td>
-                    <td className="px-4 py-2 text-left">{user.phone}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 font-medium text-left">
-                      Station origin
-                    </td>
-                    <td className="px-4 py-2 text-left">
-                      {user.stations.origin}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 font-medium text-left">
-                      Station destination
-                    </td>
-                    <td className="px-4 py-2 text-left">
-                      {user.stations.destination}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-      ) : seasonTicketHistory?.length > 0 ? (
-        <p>Your application is in progress.</p>
       ) : (
         <div className="relative flex gap-6">
           <div className="w-1/2 mb-6">
@@ -476,7 +401,7 @@ const SeasonTicketMain = () => {
                       label="Front side"
                       name="nicFS"
                       value={files.nicFS}
-                      existingValue={""}
+                      existingValue={files.nicFSUrl}
                       handleFile={handleFile}
                       error={files.nicFSErr}
                       removeImage={removeImage}
@@ -486,7 +411,7 @@ const SeasonTicketMain = () => {
                       label="Back side"
                       name="nicBS"
                       value={files.nicBS}
-                      existingValue={""}
+                      existingValue={files.nicBSUrl}
                       handleFile={handleFile}
                       removeImage={removeImage}
                       error={files.nicBSErr}
@@ -507,7 +432,7 @@ const SeasonTicketMain = () => {
                     <ImageUpload
                       name="gnCert"
                       value={files.gnCert}
-                      existingValue={form.avatar || ""}
+                      existingValue={files.gnCertUrl}
                       handleFile={handleFile}
                       error={files.gnCertErr}
                       height="400px"
@@ -528,11 +453,15 @@ const SeasonTicketMain = () => {
                     className="w-[200px]"
                     isLoading={loading}
                   >
-                    Submit for approval
+                    Re-submit for approval
                   </Button>
-                  {/* <Button type="submit" variant="light" isLoading={loading}>
-              Cancel
-            </Button> */}
+                  <Button
+                    type="submit"
+                    variant="light"
+                    handleButton={() => navigate(-1)}
+                  >
+                    Cancel
+                  </Button>
                 </div>
               </div>
             </form>
@@ -565,4 +494,4 @@ const SeasonTicketMain = () => {
   );
 };
 
-export default SeasonTicketMain;
+export default SeasonTicketReSubmissionMain;

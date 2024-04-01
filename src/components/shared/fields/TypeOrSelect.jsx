@@ -16,7 +16,7 @@ const TypeOrSelect = forwardRef(
       error,
       showRequiredLabel = false,
       onChange,
-      getApi,
+      // getApi,
     },
     ref
   ) => {
@@ -24,25 +24,25 @@ const TypeOrSelect = forwardRef(
 
     useEffect(() => {
       const fetchData = async () => {
-        if (!value) {
-          setOptionValue(null);
-        }
-        if (!getApi || !value) return;
+        // if (!value) {
+        //   setOptionValue(null);
+        // }
+        // if (!getApi || !value) return;
 
-        try {
-          const {
-            data: {
-              data: { label, value: val },
-            },
-          } = await getApi(value);
+        // try {
+        //   const {
+        //     data: {
+        //       data: { label, value: val },
+        //     },
+        //   } = await getApi(value);
 
-          setOptionValue({
-            label: label,
-            value: val,
-          });
-        } catch (error) {
-          console.error("Error fetching data: ", error);
-        }
+        setOptionValue({
+          label: value,
+          value: value,
+        });
+        // } catch (error) {
+        //   console.error("Error fetching data: ", error);
+        // }
       };
 
       fetchData();

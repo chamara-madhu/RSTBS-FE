@@ -11,12 +11,13 @@ import config from "../../../config/api";
 import PreLoading from "../../shared/loading/PreLoading";
 import { APPLICATION_STATUSES } from "../../../constant/general";
 import { ADMIN_PENDING_PAYMENT_APPROVALS_PATH } from "../../../constant/paths";
+import PaymentRejectionModal from "./modals/PaymentRejectionModal";
 
 const ReviewPaymentApprovalMain = () => {
   const [data, setData] = useState(null);
+  const [isOpenRejectionModal, setIsOpenRejectionModal] = useState(false);
   const [preLoading, setPreLoading] = useState(true);
   const [loadingAccept, setLoadingAccept] = useState(false);
-  const [loadingReject, setLoadingReject] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -32,23 +33,17 @@ const ReviewPaymentApprovalMain = () => {
       });
   }, [id]);
 
-  const acceptRejectPayment = (id, status, note = null) => {
-    if (note) {
-      setLoadingReject(true);
-    } else {
-      setLoadingAccept(true);
-    }
+  const acceptPayment = (id) => {
+    setLoadingAccept(true);
 
-    acceptOrRejectPayment(id, status, note)
+    acceptOrRejectPayment(id, APPLICATION_STATUSES.ACTIVE, null)
       .then(() => {
         setLoadingAccept(false);
-        setLoadingReject(false);
         navigate(ADMIN_PENDING_PAYMENT_APPROVALS_PATH);
       })
       .catch((err) => {
         console.error("Error fetching data:", err);
         setLoadingAccept(false);
-        setLoadingReject(false);
       });
   };
 
@@ -88,19 +83,13 @@ const ReviewPaymentApprovalMain = () => {
               alt="NIC front side"
               className="w-[600px] border rounded-xl"
             />
-            <div className="flex flex-row gap-4 mt-6">
+            <div className="flex flex-row gap-2 mt-6">
               <Button
                 type="submit"
-                variant="dark"
+                variant="primary"
                 className="w-[150px]"
                 isLoading={loadingAccept}
-                handleButton={() =>
-                  acceptRejectPayment(
-                    data._id,
-                    APPLICATION_STATUSES.ACTIVE,
-                    null
-                  )
-                }
+                handleButton={() => acceptPayment(data._id)}
               >
                 <Check size={16} /> Accept
               </Button>
@@ -108,14 +97,7 @@ const ReviewPaymentApprovalMain = () => {
                 type="submit"
                 variant="danger"
                 className="w-[150px]"
-                isLoading={loadingReject}
-                handleButton={() =>
-                  acceptRejectPayment(
-                    data._id,
-                    APPLICATION_STATUSES.PAYMENT_REJECTED,
-                    "Test"
-                  )
-                }
+                handleButton={() => setIsOpenRejectionModal(true)}
               >
                 <X size={16} /> Reject
               </Button>
@@ -123,6 +105,12 @@ const ReviewPaymentApprovalMain = () => {
           </div>
         </div>
       )}
+
+      <PaymentRejectionModal
+        isOpenRejectionModal={isOpenRejectionModal}
+        setIsOpenRejectionModal={setIsOpenRejectionModal}
+        id={data?._id}
+      />
     </>
   );
 };

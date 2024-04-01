@@ -1,6 +1,7 @@
-import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
+import { LogOut, User } from "feather-icons-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -30,7 +31,9 @@ const Navbar = () => {
                 <Menu.Button className="relative flex items-center justify-center gap-2 pl-4 text-sm bg-gray-800 rounded-full">
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
-                  <span className="text-white">{user.fName}</span>
+                  <span className="text-white">
+                    {user.fName} {user.lName}
+                  </span>
                   {/* {1 === 1 ? (
                     <img
                       className="w-10 h-10 rounded-full"
@@ -61,7 +64,7 @@ const Navbar = () => {
                     {() => (
                       <a href={`/profile`}>
                         <div className="flex items-center w-full h-8 gap-2 px-4 m-0 overflow-hidden text-sm rounded-lg cursor-pointer text-pp-gray-900 hover:bg-pp-gray-200 active:bg-pp-gray-450">
-                          {/* <UserIcon /> */}
+                          <User size={16} />
                           <span className="text-sm font-medium">Profile</span>
                         </div>
                       </a>
@@ -72,7 +75,7 @@ const Navbar = () => {
                     {() => (
                       <span onClick={handleLogout}>
                         <div className="flex items-center w-full h-8 gap-2 px-4 m-0 overflow-hidden text-sm rounded-lg cursor-pointer text-pp-gray-900 hover:bg-pp-gray-200 active:bg-pp-gray-450">
-                          {/* <LogoutIcon /> */}
+                          <LogOut size={16} />
                           <span className="text-sm font-medium">Logout</span>
                         </div>
                       </span>

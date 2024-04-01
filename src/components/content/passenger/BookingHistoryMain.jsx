@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import PageHeader from "../../shared/headers/PageHeader";
-import { getMySeasonTicket } from "../../../api/seasonTicketAPI";
+import { getSeasonTicketHistory } from "../../../api/seasonTicketAPI";
 import moment from "moment";
 import StatusIndicators from "../../shared/status-indicators/StatusIndicators";
 import Button from "../../shared/buttons/Button";
 import { APPLICATION_STATUSES } from "../../../constant/general";
 import { useNavigate } from "react-router-dom";
 import {
+  APPLICATION_RE_SUBMISSION_PATH,
   BOOKING_PAYMENT_PATH,
+  BOOKING_RENEW_PATH,
   BOOKING_USAGE_PATH,
 } from "../../../constant/paths";
 
@@ -16,7 +18,7 @@ const BookingHistoryMain = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getMySeasonTicket()
+    getSeasonTicketHistory()
       .then((res) => {
         setData(res.data);
         // setLoading(false);
@@ -27,12 +29,20 @@ const BookingHistoryMain = () => {
       });
   }, []);
 
+  const handleApplicationReSubmissionClick = (id) => {
+    navigate(`${APPLICATION_RE_SUBMISSION_PATH.replace(":id", id)}`);
+  };
+
   const handlePayNowClick = (id) => {
     navigate(`${BOOKING_PAYMENT_PATH.replace(":id", id)}`);
   };
 
   const handleViewCalenderClick = (id) => {
     navigate(`${BOOKING_USAGE_PATH.replace(":id", id)}`);
+  };
+
+  const renewExpiredClick = (id) => {
+    navigate(`${BOOKING_RENEW_PATH.replace(":id", id)}`);
   };
 
   return (
@@ -69,6 +79,14 @@ const BookingHistoryMain = () => {
                       the payments.
                     </p>
                   )}
+                  {(booking.status ===
+                    APPLICATION_STATUSES.APPLICATION_REJECTED ||
+                    booking.status ===
+                      APPLICATION_STATUSES.PAYMENT_REJECTED) && (
+                    <p className="pt-3 text-[12px] text-red-500">
+                      <b>Reason for the rejection:</b> {booking.note}
+                    </p>
+                  )}
                 </div>
                 {booking.status === APPLICATION_STATUSES.PAYMENT_PENDING && (
                   <Button
@@ -77,6 +95,37 @@ const BookingHistoryMain = () => {
                     handleButton={() => handlePayNowClick(booking._id)}
                   >
                     Pay now
+                  </Button>
+                )}
+                {booking.status ===
+                  APPLICATION_STATUSES.APPLICATION_REJECTED && (
+                  <Button
+                    variant="dark"
+                    className="w-fit"
+                    handleButton={() =>
+                      handleApplicationReSubmissionClick(booking._id)
+                    }
+                  >
+                    Re-submit
+                  </Button>
+                )}
+                {booking.status === APPLICATION_STATUSES.PAYMENT_REJECTED && (
+                  <Button
+                    variant="dark"
+                    className="w-fit"
+                    handleButton={() => handlePayNowClick(booking._id)}
+                  >
+                    Re-payment
+                  </Button>
+                )}
+                {(booking.status === APPLICATION_STATUSES.EXPIRED ||
+                  moment().isAfter(booking.duration.end)) && (
+                  <Button
+                    variant="dark"
+                    className="w-fit"
+                    handleButton={() => renewExpiredClick(booking._id)}
+                  >
+                    Renew
                   </Button>
                 )}
                 {(booking.status === APPLICATION_STATUSES.ACTIVE ||
@@ -94,6 +143,12 @@ const BookingHistoryMain = () => {
 
               <div className="flex gap-4">
                 <div className="flex items-center gap-3">
+                  <p className="text-sm">Fee :</p>
+                  <span className="flex items-center h-8 px-3 text-sm rounded-full bg-pp-gray-200">
+                    LKR {booking.amount}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
                   <p className="text-sm">Station Origin :</p>
                   <span className="flex items-center h-8 px-3 text-sm rounded-full bg-pp-gray-200">
                     {booking.applicationId.stations.origin}
@@ -106,9 +161,27 @@ const BookingHistoryMain = () => {
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
+                  <p className="text-sm">Days :</p>
+                  <span className="flex items-center h-8 px-3 text-sm font-bold rounded-full bg-pp-gray-200">
+                    {moment(booking.duration.end).diff(
+                      moment(booking.duration.start),
+                      "days"
+                    )}{" "}
+                    days
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
                   <p className="text-sm">Days Left :</p>
                   <span className="flex items-center h-8 px-3 text-sm font-bold rounded-full bg-pp-gray-200">
-                    {moment(booking.duration.end).diff(moment(), "days")} days
+                    {moment().isBefore(moment(booking.duration.end))
+                      ? moment(booking.duration.end).diff(
+                          moment().isBefore(booking.duration.start)
+                            ? moment(booking.duration.start)
+                            : moment(),
+                          "days"
+                        )
+                      : 0}{" "}
+                    days
                   </span>
                 </div>
               </div>
