@@ -295,7 +295,7 @@ const SeasonTicketReSubmissionMain = () => {
       {preLoading ? (
         <PreLoading />
       ) : (
-        <div className="relative flex gap-6">
+        <div className="relative flex gap-6" data-testid="season-ticket-resubmission-main">
           <div className="w-1/2 mb-6">
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-7">
