@@ -48,7 +48,7 @@ const BookingHistoryMain = () => {
   return (
     <>
       <PageHeader title="Your booking history" />
-      <div className="w-full">
+      <div className="w-full" data-testid="booking-history-main">
         {data.map((booking) => (
           <div
             key={booking._id}
