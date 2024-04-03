@@ -54,7 +54,7 @@ const ReviewNewApplicationMain = () => {
       {preLoading ? (
         <PreLoading />
       ) : (
-        <div className="relative flex w-full gap-6 mb-6">
+        <div className="relative flex w-full gap-6 mb-6" data-testid="review-new-application-main">
           <div style={{ width: "calc(100% - 400px)" }}>
             {data && (
               <table className="table-fixed">

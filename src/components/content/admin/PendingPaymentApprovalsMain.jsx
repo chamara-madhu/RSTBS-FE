@@ -57,7 +57,7 @@ const PendingPaymentApprovalsMain = () => {
   return (
     <>
       <PageHeader title="Pending payment approvals" />
-      <div className="w-full">
+      <div className="w-full" data-testid="pending-payment-approvals-main">
         {data.length > 0 ? (
           <div className="flex flex-col gap-4">
             <Input
