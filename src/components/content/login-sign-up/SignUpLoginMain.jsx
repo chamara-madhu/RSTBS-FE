@@ -198,7 +198,7 @@ const SignUpLoginMain = () => {
   };
 
   return (
-    <div className="flex w-full h-full">
+    <div className="flex w-full h-full" data-testid="signup-login-main">
       <div className="flex w-1/2 h-[100vh]">
         <img
           src={MainBg}
