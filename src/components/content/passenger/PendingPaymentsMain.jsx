@@ -120,7 +120,7 @@ const PendingPaymentsMain = () => {
                   />
                 </div>
                 <Button
-                  variant="dark"
+                  variant="primary"
                   className="w-[400px]"
                   handleButton={uploadPayment}
                   isLoading={loadingUpload}
@@ -166,7 +166,7 @@ const PendingPaymentsMain = () => {
                 <p className="text-sm font-medium">Select Payment Method</p>
                 <div className="flex flex-col items-center gap-1">
                   <Button
-                    variant="light"
+                    variant="primary"
                     className="w-[400px]"
                     // handleButton={() => handlePayNowClick(booking._id)}
                   >
@@ -180,7 +180,7 @@ const PendingPaymentsMain = () => {
                 <p className="text-sm text-pp-gray-500">Or</p>
                 <div className="flex flex-col items-center gap-1">
                   <Button
-                    variant="light"
+                    variant="primary"
                     className="w-[400px]"
                     handleButton={() => setShowBankDeposits(true)}
                   >

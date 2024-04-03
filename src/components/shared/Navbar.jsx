@@ -1,16 +1,24 @@
-import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
-import UserImg from "../../assets/images/user.png";
+import { Menu, Transition } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
+import { LogOut, User } from "feather-icons-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const user = localStorage.getItem("user_data")
+    ? JSON.parse(localStorage.getItem("user_data"))
+    : {
+        fName: "",
+        lName: "",
+      };
+
   const handleLogout = () => {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("user_data");
 
     navigate("/");
   };
+
   return (
     <nav className="sticky top-0 z-50 bg-black shadow-lg">
       <div className="w-full px-4">
@@ -23,21 +31,23 @@ const Navbar = () => {
                 <Menu.Button className="relative flex items-center justify-center gap-2 pl-4 text-sm bg-gray-800 rounded-full">
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
-                  <span className="text-white">Chamara</span>
-                  {1 === 1 ? (
+                  <span className="text-white">
+                    {user.fName} {user.lName}
+                  </span>
+                  {/* {1 === 1 ? (
                     <img
                       className="w-10 h-10 rounded-full"
                       src={UserImg}
                       alt="user profile"
                     />
-                  ) : (
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-pp-primary-100">
-                      <p className="text-sm font-medium">
-                        CM
-                        {/* {getFirstLetters(session?.user?.name)} */}
-                      </p>
-                    </div>
-                  )}
+                  ) : ( */}
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-pp-primary-100">
+                    <p className="text-sm font-medium">
+                      {user.fName?.[0]?.toUpperCase()}
+                      {user.lName?.[0]?.toUpperCase()}
+                    </p>
+                  </div>
+                  {/* )} */}
                 </Menu.Button>
               </div>
               <Transition
@@ -54,7 +64,7 @@ const Navbar = () => {
                     {() => (
                       <a href={`/profile`}>
                         <div className="flex items-center w-full h-8 gap-2 px-4 m-0 overflow-hidden text-sm rounded-lg cursor-pointer text-pp-gray-900 hover:bg-pp-gray-200 active:bg-pp-gray-450">
-                          {/* <UserIcon /> */}
+                          <User size={16} />
                           <span className="text-sm font-medium">Profile</span>
                         </div>
                       </a>
@@ -65,7 +75,7 @@ const Navbar = () => {
                     {() => (
                       <span onClick={handleLogout}>
                         <div className="flex items-center w-full h-8 gap-2 px-4 m-0 overflow-hidden text-sm rounded-lg cursor-pointer text-pp-gray-900 hover:bg-pp-gray-200 active:bg-pp-gray-450">
-                          {/* <LogoutIcon /> */}
+                          <LogOut size={16} />
                           <span className="text-sm font-medium">Logout</span>
                         </div>
                       </span>
