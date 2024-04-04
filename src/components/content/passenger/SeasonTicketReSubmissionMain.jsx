@@ -19,6 +19,7 @@ import {
 import Directions from "./Directions";
 import { getSeasonTicket } from "../../../api/seasonTicketAPI";
 import { getAllStations } from "../../../api/stationAPI";
+import { toast } from "react-toastify";
 
 const SeasonTicketReSubmissionMain = () => {
   const [preLoading, setPreLoading] = useState(true);
@@ -272,6 +273,7 @@ const SeasonTicketReSubmissionMain = () => {
       reSubmitApplication(formData)
         .then(() => {
           setLoading(false);
+          toast.success("Application has been re-submitted.");
           navigate("/booking-history");
         })
         .catch((err) => {

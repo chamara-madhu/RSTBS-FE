@@ -6,6 +6,7 @@ import Input from "../../shared/fields/Input";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { renewSeasonTicket } from "../../../api/seasonTicketAPI";
+import { toast } from "react-toastify";
 
 const RenewSeasonTicketMain = () => {
   const [preLoading, setPreLoading] = useState(false);
@@ -82,6 +83,9 @@ const RenewSeasonTicketMain = () => {
       renewSeasonTicket(data)
         .then(() => {
           setLoading(false);
+          toast.success(
+            "Season ticket has been renewed. Please do the relevant payment."
+          );
           navigate("/booking-history");
         })
         .catch((err) => {

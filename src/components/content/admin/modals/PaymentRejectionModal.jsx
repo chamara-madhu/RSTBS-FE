@@ -6,6 +6,7 @@ import { ADMIN_PENDING_PAYMENT_APPROVALS_PATH } from "../../../../constant/paths
 import { acceptOrRejectPayment } from "../../../../api/applicationAPIs";
 import { useNavigate } from "react-router-dom";
 import { APPLICATION_STATUSES } from "../../../../constant/general";
+import { toast } from "react-toastify";
 
 const PaymentRejectionModal = ({
   isOpenRejectionModal,
@@ -36,6 +37,7 @@ const PaymentRejectionModal = ({
     )
       .then(() => {
         setLoadingReject(false);
+        toast.success("Payment has been rejected.");
         navigate(ADMIN_PENDING_PAYMENT_APPROVALS_PATH);
       })
       .catch((err) => {

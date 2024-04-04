@@ -12,6 +12,7 @@ import PreLoading from "../../shared/loading/PreLoading";
 import { APPLICATION_STATUSES } from "../../../constant/general";
 import { ADMIN_PENDING_PAYMENT_APPROVALS_PATH } from "../../../constant/paths";
 import PaymentRejectionModal from "./modals/PaymentRejectionModal";
+import { toast } from "react-toastify";
 
 const ReviewPaymentApprovalMain = () => {
   const [data, setData] = useState(null);
@@ -39,6 +40,7 @@ const ReviewPaymentApprovalMain = () => {
     acceptOrRejectPayment(id, APPLICATION_STATUSES.ACTIVE, null)
       .then(() => {
         setLoadingAccept(false);
+        toast.success("Payment has been approved.");
         navigate(ADMIN_PENDING_PAYMENT_APPROVALS_PATH);
       })
       .catch((err) => {
