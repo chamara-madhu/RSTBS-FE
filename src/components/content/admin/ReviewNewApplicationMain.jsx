@@ -13,6 +13,7 @@ import PreLoading from "../../shared/loading/PreLoading";
 import { APPLICATION_STATUSES } from "../../../constant/general";
 import { ADMIN_NEW_APPLICATIONS_PATH } from "../../../constant/paths";
 import ApplicationRejectionModal from "./modals/ApplicationRejectionModal";
+import { toast } from "react-toastify";
 
 const ReviewNewApplicationMain = () => {
   const [data, setData] = useState(null);
@@ -40,6 +41,7 @@ const ReviewNewApplicationMain = () => {
     acceptOrRejectApplication(id, APPLICATION_STATUSES.PAYMENT_PENDING, null)
       .then(() => {
         setLoadingAccept(false);
+        toast.success("Application has been approved.");
         navigate(ADMIN_NEW_APPLICATIONS_PATH);
       })
       .catch((err) => {

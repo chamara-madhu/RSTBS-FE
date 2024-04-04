@@ -22,6 +22,7 @@ import { getSeasonTicketHistory } from "../../../api/seasonTicketAPI";
 import { getAllStations } from "../../../api/stationAPI";
 import { Download } from "feather-icons-react";
 import html2PDF from "jspdf-html2canvas";
+import { toast } from "react-toastify";
 
 const SeasonTicketMain = () => {
   const [qr, setQr] = useState(null);
@@ -257,6 +258,7 @@ const SeasonTicketMain = () => {
       submitApplication(formData)
         .then(() => {
           setLoading(false);
+          toast.success("Application has been submitted for approval.");
           navigate("/booking-history");
         })
         .catch((err) => {
