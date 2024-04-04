@@ -55,7 +55,7 @@ const AllNewApplicationsMain = () => {
   return (
     <>
       <PageHeader title="New applications" />
-      <div className="w-full">
+      <div className="w-full" data-testid="all-new-applications-main">
         {data.length > 0 ? (
           <div className="flex flex-col gap-4">
             <Input

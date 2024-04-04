@@ -299,7 +299,7 @@ const SeasonTicketMain = () => {
       {preLoading ? (
         <PreLoading />
       ) : user?.qr && qr ? (
-        <div className="flex w-full gap-4 mb-6">
+        <div className="flex w-full gap-4 mb-6" data-testid="season-ticket-main">
           <div className="flex flex-col items-center justify-center gap-5">
             <div
               className="flex flex-col items-center justify-center gap-4 w-[340px] border rounded-lg p-5"
