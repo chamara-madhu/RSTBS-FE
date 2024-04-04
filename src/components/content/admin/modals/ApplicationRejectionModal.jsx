@@ -6,6 +6,7 @@ import { ADMIN_NEW_APPLICATIONS_PATH } from "../../../../constant/paths";
 import { acceptOrRejectApplication } from "../../../../api/applicationAPIs";
 import { useNavigate } from "react-router-dom";
 import { APPLICATION_STATUSES } from "../../../../constant/general";
+import { toast } from "react-toastify";
 
 const ApplicationRejectionModal = ({
   isOpenRejectionModal,
@@ -36,6 +37,7 @@ const ApplicationRejectionModal = ({
     )
       .then(() => {
         setLoadingReject(false);
+        toast.success("Application has been rejected.");
         navigate(ADMIN_NEW_APPLICATIONS_PATH);
       })
       .catch((err) => {

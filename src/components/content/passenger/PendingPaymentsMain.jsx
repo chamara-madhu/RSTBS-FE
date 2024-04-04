@@ -15,6 +15,7 @@ import PeoplesBank from "../../../assets/images/peoples.png";
 import BocBank from "../../../assets/images/boc.png";
 import ImageUpload from "../../shared/upload/ImageUpload";
 import { APPLICATION_STATUSES } from "../../../constant/general";
+import { toast } from "react-toastify";
 
 const banks = [
   {
@@ -89,6 +90,7 @@ const PendingPaymentsMain = () => {
     uploadBankSlip(formData)
       .then(() => {
         setLoadingUpload(false);
+        toast.success("Submission has been successful.");
         navigate("/booking-history");
       })
       .catch((err) => {
