@@ -52,7 +52,7 @@ const BookingHistoryMain = () => {
         {data.map((booking) => (
           <div
             key={booking._id}
-            className="flex justify-between gap-6 p-4 mt-4 border rounded-lg border-pp-primary-200"
+            className="relative flex justify-between gap-6 p-4 mt-4 border rounded-lg border-pp-primary-200"
           >
             <div className="w-full">
               <div className="flex justify-between w-full">
@@ -91,7 +91,7 @@ const BookingHistoryMain = () => {
                 {booking.status === APPLICATION_STATUSES.PAYMENT_PENDING && (
                   <Button
                     variant="dark"
-                    className="w-fit"
+                    className="w-[140px]"
                     handleButton={() => handlePayNowClick(booking._id)}
                   >
                     Pay now
@@ -101,7 +101,7 @@ const BookingHistoryMain = () => {
                   APPLICATION_STATUSES.APPLICATION_REJECTED && (
                   <Button
                     variant="dark"
-                    className="w-fit"
+                    className="w-[140px]"
                     handleButton={() =>
                       handleApplicationReSubmissionClick(booking._id)
                     }
@@ -112,7 +112,7 @@ const BookingHistoryMain = () => {
                 {booking.status === APPLICATION_STATUSES.PAYMENT_REJECTED && (
                   <Button
                     variant="dark"
-                    className="w-fit"
+                    className="w-[140px]"
                     handleButton={() => handlePayNowClick(booking._id)}
                   >
                     Re-payment
@@ -122,21 +122,28 @@ const BookingHistoryMain = () => {
                   moment().isAfter(booking.duration.end)) && (
                   <Button
                     variant="dark"
-                    className="w-fit"
+                    className="w-[140px]"
                     handleButton={() => renewExpiredClick(booking._id)}
                   >
                     Renew
                   </Button>
                 )}
-                {(booking.status === APPLICATION_STATUSES.ACTIVE ||
-                  booking.status === APPLICATION_STATUSES.EXPIRED) && (
+                {booking.status === APPLICATION_STATUSES.ACTIVE ||
+                booking.status === APPLICATION_STATUSES.EXPIRED ? (
                   <Button
                     variant="primary"
-                    className="w-fit"
+                    className="w-[140px]"
                     handleButton={() => handleViewCalenderClick(booking._id)}
                   >
                     View Calender
                   </Button>
+                ) : (
+                  <span
+                    className="relative top-[10px] right-[45px] text-xs font-medium text-pp-primary-600 cursor-pointer"
+                    onClick={() => handleViewCalenderClick(booking._id)}
+                  >
+                    View timeline
+                  </span>
                 )}
               </div>
               <hr className="my-3 border-t-2 border-pp-gray-200" />
@@ -145,7 +152,7 @@ const BookingHistoryMain = () => {
                 <div className="flex items-center gap-3">
                   <p className="text-sm">Fee :</p>
                   <span className="flex items-center h-8 px-3 text-sm rounded-full bg-pp-gray-200">
-                    LKR {booking.amount}
+                    LKR {booking.amount.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">

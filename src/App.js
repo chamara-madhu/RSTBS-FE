@@ -20,6 +20,7 @@ import {
   BOOKING_PAYMENT_PATH,
   BOOKING_RENEW_PATH,
   BOOKING_USAGE_PATH,
+  PAYMENT_SUCCESS_PATH,
   SEASON_TICKET_PATH,
 } from "./constant/paths";
 import AllNewApplications from "./pages/admin/AllNewApplications";
@@ -30,6 +31,7 @@ import ReviewPaymentApproval from "./pages/admin/ReviewPaymentApproval";
 import BookingUsage from "./pages/passenger/BookingUsage";
 import SeasonTicketReSubmission from "./pages/passenger/SeasonTicketReSubmission";
 import RenewSeasonTicket from "./pages/passenger/RenewSeasonTicket";
+import PaymentSuccess from "./pages/passenger/PaymentSuccess";
 
 // Create a private route for passengers
 const PassengerRoute = () => {
@@ -89,6 +91,13 @@ function App() {
             exact
             path={BOOKING_PAYMENT_PATH}
             element={<PendingPayments />}
+          />
+        </Route>
+        <Route exact path={PAYMENT_SUCCESS_PATH} element={<PassengerRoute />}>
+          <Route
+            exact
+            path={PAYMENT_SUCCESS_PATH}
+            element={<PaymentSuccess />}
           />
         </Route>
         <Route exact path={BOOKING_RENEW_PATH} element={<PassengerRoute />}>

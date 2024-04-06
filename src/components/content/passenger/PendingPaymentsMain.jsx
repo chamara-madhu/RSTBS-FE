@@ -16,6 +16,9 @@ import BocBank from "../../../assets/images/boc.png";
 import ImageUpload from "../../shared/upload/ImageUpload";
 import { APPLICATION_STATUSES } from "../../../constant/general";
 import { toast } from "react-toastify";
+import { loadStripe } from "@stripe/stripe-js";
+import { seasonTicketOnlinePayment } from "../../../api/seasonTicketAPI";
+import pay from "../../../config/stripe";
 
 const banks = [
   {
@@ -98,6 +101,18 @@ const PendingPaymentsMain = () => {
       });
   };
 
+  const handleOnlinePayment = async () => {
+    const stripe = await loadStripe(pay.REACT_APP_STEIPE_PUBLISHABLE_KEY);
+
+    seasonTicketOnlinePayment(data?.amount, id)
+      .then((res) => {
+        stripe.redirectToCheckout({
+          sessionId: res.data.sessionId,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <>
       <PageHeader title="Make your payment" />
@@ -170,7 +185,7 @@ const PendingPaymentsMain = () => {
                   <Button
                     variant="primary"
                     className="w-[400px]"
-                    // handleButton={() => handlePayNowClick(booking._id)}
+                    handleButton={handleOnlinePayment}
                   >
                     Online payment
                   </Button>

@@ -7,6 +7,7 @@ import "react-calendar/dist/Calendar.css";
 import moment from "moment";
 import { getSeasonTicketUsage } from "../../../api/seasonTicketAPI";
 import { useParams } from "react-router-dom";
+import { Check, X } from "feather-icons-react";
 
 const BookingUsageMain = () => {
   const [booking, setBooking] = useState(null);
@@ -27,7 +28,7 @@ const BookingUsageMain = () => {
 
   return (
     <>
-      <PageHeader title="Calender" showBack />
+      <PageHeader title="Timeline and Calender" showBack />
       {preLoading ? (
         <PreLoading />
       ) : (
@@ -50,6 +51,18 @@ const BookingUsageMain = () => {
               />
             </div>
           )}
+          <div className="w-full">
+            <p className="mb-4 text-base font-semibold">Event Timeline</p>
+            {booking.flow.map((event, i) => (
+              <p className="mb-1 text-sm" key={i}>
+                <span className="font-medium">
+                  {moment.utc(event.date).local().format("DD-MM-YYYY HH:MM a")}{" "}
+                  :
+                </span>{" "}
+                {event.name}
+              </p>
+            ))}
+          </div>
         </div>
       )}
     </>

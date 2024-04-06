@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, User } from "feather-icons-react";
+import Logo from "../../assets/images/logo.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -23,7 +24,13 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-black shadow-lg">
       <div className="w-full px-4">
         <div className="flex items-center justify-between py-4">
-          <div className="text-2xl font-semibold text-white">RSTBS</div>
+          <div className="">
+            <img
+              src={Logo}
+              alt="RSTBS logo"
+              className="absolute top-2 left-0 w-[100px]"
+            />
+          </div>
 
           <div className="">
             <Menu as="div" className="relative">
@@ -34,20 +41,12 @@ const Navbar = () => {
                   <span className="text-white">
                     {user.fName} {user.lName}
                   </span>
-                  {/* {1 === 1 ? (
-                    <img
-                      className="w-10 h-10 rounded-full"
-                      src={UserImg}
-                      alt="user profile"
-                    />
-                  ) : ( */}
                   <div className="flex items-center justify-center w-10 h-10 rounded-full bg-pp-primary-100">
                     <p className="text-sm font-medium">
                       {user.fName?.[0]?.toUpperCase()}
                       {user.lName?.[0]?.toUpperCase()}
                     </p>
                   </div>
-                  {/* )} */}
                 </Menu.Button>
               </div>
               <Transition

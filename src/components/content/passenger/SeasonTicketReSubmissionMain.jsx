@@ -297,7 +297,10 @@ const SeasonTicketReSubmissionMain = () => {
       {preLoading ? (
         <PreLoading />
       ) : (
-        <div className="relative flex gap-6" data-testid="season-ticket-resubmission-main">
+        <div
+          className="relative flex gap-6"
+          data-testid="season-ticket-resubmission-main"
+        >
           <div className="w-1/2 mb-6">
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-7">
@@ -445,7 +448,7 @@ const SeasonTicketReSubmissionMain = () => {
 
                 <div>
                   <p className="text-lg font-semibold">Season ticket fee</p>
-                  <p className="text-sm">LKR. {fee.toFixed(2)}</p>
+                  <p className="text-sm">LKR. {fee}</p>
                 </div>
 
                 <div className="flex flex-row gap-2 mt-4">

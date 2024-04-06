@@ -15,7 +15,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className="flex sticky top-[72px] flex-col w-[300px] h-full bg-pp-primary-25 border-r border-pp-primary-100 py-4"
+      className="flex sticky top-[72px] flex-col w-[300px] h-full bg-pp-primary-25 border-r border-pp-primary-100 pt-8 pb-4"
       style={{ height: "calc(100vh - 72px)" }}
     >
       <Link to={SEASON_TICKET_PATH}>

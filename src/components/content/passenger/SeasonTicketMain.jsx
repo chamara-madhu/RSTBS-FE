@@ -11,12 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { getUserQR } from "../../../api/userAPI";
 import PreLoading from "../../shared/loading/PreLoading";
 import config from "../../../config/api";
-import {
-  APIProvider,
-  Map,
-  useMap,
-  useMapsLibrary,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import Directions from "./Directions";
 import { getSeasonTicketHistory } from "../../../api/seasonTicketAPI";
 import { getAllStations } from "../../../api/stationAPI";
@@ -58,9 +53,13 @@ const SeasonTicketMain = () => {
     durationErr: "",
   });
   const [fee, setFee] = useState(0);
+  const [km, setKm] = useState(0);
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  console.log({ user });
+  console.log({ qr });
 
   useEffect(() => {
     Promise.all([getUserQR(), getSeasonTicketHistory()])
@@ -171,10 +170,14 @@ const SeasonTicketMain = () => {
 
     if (!form.origin) {
       originErr = "Station origin is required";
+    } else if (form.origin === form.destination) {
+      originErr = "Invalid stations";
     }
 
     if (!form.destination) {
       destinationErr = "Station destination is required";
+    } else if (form.origin === form.destination) {
+      destinationErr = "Invalid stations";
     }
 
     if (!form.start) {
@@ -250,7 +253,7 @@ const SeasonTicketMain = () => {
       formData.set("start", form.start);
       formData.set("end", form.end);
       formData.set("amount", fee);
-      formData.set("km", 5);
+      formData.set("km", km);
       formData.append("nicFS", files.nicFS);
       formData.append("nicBS", files.nicBS);
       formData.append("gnCert", files.gnCert);
@@ -301,7 +304,10 @@ const SeasonTicketMain = () => {
       {preLoading ? (
         <PreLoading />
       ) : user?.qr && qr ? (
-        <div className="flex w-full gap-4 mb-6" data-testid="season-ticket-main">
+        <div
+          className="flex w-full gap-4 mb-6"
+          data-testid="season-ticket-main"
+        >
           <div className="flex flex-col items-center justify-center gap-5">
             <div
               className="flex flex-col items-center justify-center gap-4 w-[340px] border rounded-lg p-5"
@@ -520,7 +526,7 @@ const SeasonTicketMain = () => {
 
                 <div>
                   <p className="text-lg font-semibold">Season ticket fee</p>
-                  <p className="text-sm">LKR. {fee.toFixed(2)}</p>
+                  <p className="text-sm">LKR. {fee}</p>
                 </div>
 
                 <div className="flex flex-row gap-2 mt-4">
@@ -557,6 +563,8 @@ const SeasonTicketMain = () => {
                   start={form.start}
                   end={form.end}
                   setFee={setFee}
+                  km={km}
+                  setKm={setKm}
                 />
               </Map>
             </APIProvider>
