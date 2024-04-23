@@ -63,8 +63,24 @@ export const getSeasonTicketUsage = (id) => {
   });
 };
 
-export const renewSeasonTicket = () => {
-  return axios.post(`${config.API_URL}/v1/api/season-tickets/renew`, {
+export const renewSeasonTicket = (data) => {
+  return axios.post(`${config.API_URL}/v1/api/season-tickets/renew`, data, {
+    headers: {
+      Authorization: `Bearer ${auth_token()}`,
+    },
+  });
+};
+
+export const getRecentSeasonTicket = () => {
+  return axios.get(`${config.API_URL}/v1/api/season-tickets/recent/ticket`, {
+    headers: {
+      Authorization: `Bearer ${auth_token()}`,
+    },
+  });
+};
+
+export const getAllSeasonTickets = () => {
+  return axios.get(`${config.API_URL}/v1/api/season-tickets/all/tickets`, {
     headers: {
       Authorization: `Bearer ${auth_token()}`,
     },

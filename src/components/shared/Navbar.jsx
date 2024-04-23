@@ -59,7 +59,7 @@ const Navbar = () => {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute right-0 p-1 mt-2 origin-top-right bg-white shadow-lg cursor-pointer z-[100] rounded-xl w-52 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <Menu.Item>
+                  {/* <Menu.Item>
                     {() => (
                       <a href={`/profile`}>
                         <div className="flex items-center w-full h-8 gap-2 px-4 m-0 overflow-hidden text-sm rounded-lg cursor-pointer text-pp-gray-900 hover:bg-pp-gray-200 active:bg-pp-gray-450">
@@ -68,8 +68,8 @@ const Navbar = () => {
                         </div>
                       </a>
                     )}
-                  </Menu.Item>
-                  <div className="h-[1px] bg-pp-gray-450 my-1" />
+                  </Menu.Item> */}
+                  {/* <div className="h-[1px] bg-pp-gray-450 my-1" /> */}
                   <Menu.Item>
                     {() => (
                       <span onClick={handleLogout}>

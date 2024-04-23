@@ -57,6 +57,7 @@ const SeasonTicketReSubmissionMain = () => {
     durationErr: "",
   });
   const [fee, setFee] = useState(0);
+  const [km, setKm] = useState(0);
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -178,10 +179,14 @@ const SeasonTicketReSubmissionMain = () => {
 
     if (!form.origin) {
       originErr = "Station origin is required";
+    } else if (form.origin === form.destination) {
+      originErr = "Invalid stations";
     }
 
     if (!form.destination) {
       destinationErr = "Station destination is required";
+    } else if (form.origin === form.destination) {
+      destinationErr = "Invalid stations";
     }
 
     if (!form.start) {
@@ -259,7 +264,7 @@ const SeasonTicketReSubmissionMain = () => {
       formData.set("start", form.start);
       formData.set("end", form.end);
       formData.set("amount", fee);
-      formData.set("km", 5);
+      formData.set("km", km);
       if (files?.nicFS) {
         formData.append("nicFS", files.nicFS);
       }
@@ -446,6 +451,21 @@ const SeasonTicketReSubmissionMain = () => {
                   </div>
                 </div>
 
+                {km && (
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Season ticket details
+                    </p>
+                    <p className="text-sm">Distance in km: {km} km</p>
+                    {form.start && form.end ? (
+                      <p className="text-sm">
+                        No of days:{" "}
+                        {moment(form.end).diff(moment(form.start), "days")} days
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+
                 <div>
                   <p className="text-lg font-semibold">Season ticket fee</p>
                   <p className="text-sm">LKR. {fee}</p>
@@ -489,6 +509,8 @@ const SeasonTicketReSubmissionMain = () => {
                   start={form.start}
                   end={form.end}
                   setFee={setFee}
+                  km={km}
+                  setKm={setKm}
                 />
               </Map>
             </APIProvider>

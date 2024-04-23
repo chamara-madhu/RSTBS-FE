@@ -66,7 +66,7 @@ const PaymentRejectionModal = ({
       <div className="flex justify-end gap-2 mt-6">
         <Button
           variant="light"
-          className="w-fit"
+          className="w-[100px]"
           handleButton={() => {
             setIsOpenRejectionModal(false);
           }}
@@ -75,7 +75,7 @@ const PaymentRejectionModal = ({
         </Button>
         <Button
           variant="primary"
-          className="w-fit"
+          className="w-[100px]"
           isLoading={loadingReject}
           handleButton={() => rejectPayment(id)}
         >

@@ -7,9 +7,10 @@ const Directions = ({ origin, destination, start, end, setFee, km, setKm }) => {
   const routesLibrary = useMapsLibrary("routes");
   const [directionsService, setDirectionsService] = useState();
   const [directionsRenderer, setDirectionsRenderer] = useState();
-  const [routes, setRoutes] = useState([]);
-  const selected = routes[0];
-  const leg = selected?.legs[0];
+  // const [routes, setRoutes] = useState([]);
+  const [leg, setLeg] = useState(null);
+  // const selected = routes[0];
+  // const leg = selected?.legs[0];
 
   useEffect(() => {
     if (!routesLibrary || !map) return;
@@ -28,7 +29,8 @@ const Directions = ({ origin, destination, start, end, setFee, km, setKm }) => {
       .then((res) => {
         console.log({ res });
         directionsRenderer.setDirections(res);
-        setRoutes(res.routes);
+        // setRoutes(res.routes);
+        setLeg(res.routes?.[0]?.legs?.[0]);
 
         if (origin && destination && start && end) {
           const obj = {
@@ -55,17 +57,18 @@ const Directions = ({ origin, destination, start, end, setFee, km, setKm }) => {
     start,
     end,
     setFee,
+    km,
   ]);
 
   useEffect(() => {
     setKm(leg?.distance?.text?.replace(" km", ""));
   }, [leg?.distance?.text, setKm]);
 
-  if (!leg) return null;
+  // // if (!leg) return null;
 
-  console.log({ leg });
+  // console.log({ leg });
 
-  return null;
+  return <div></div>;
 };
 
 export default Directions;

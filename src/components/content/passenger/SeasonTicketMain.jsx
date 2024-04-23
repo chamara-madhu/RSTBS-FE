@@ -18,6 +18,7 @@ import { getAllStations } from "../../../api/stationAPI";
 import { Download } from "feather-icons-react";
 import html2PDF from "jspdf-html2canvas";
 import { toast } from "react-toastify";
+import google from "../../../config/google";
 
 const SeasonTicketMain = () => {
   const [qr, setQr] = useState(null);
@@ -81,7 +82,6 @@ const SeasonTicketMain = () => {
         .then((response) => response.blob())
         .then((blob) => {
           // Now 'blob' contains the content of the remote file as a Blob
-          console.log(blob);
           setQr(blob);
         })
         .catch((error) => console.error("Error fetching the file:", error));
@@ -288,7 +288,7 @@ const SeasonTicketMain = () => {
         format: "a6",
       },
       imageType: "image/jpeg",
-      output: "./pdf/generate.pdf",
+      output: "./qr.pdf",
     });
 
     setLoading(false);
@@ -319,9 +319,9 @@ const SeasonTicketMain = () => {
                 className="w-[300px] border rounded-lg"
               />
               <p className="text-lg font-medium text-center">
-                Neluwe Liyanage Chamara Madhushanka Gunathilaka
+                {user?.fullName}
               </p>
-              <p className="text-sm text-center">933110443V</p>
+              <p className="text-sm text-center">{user.nic}</p>
             </div>
 
             <Button
@@ -383,7 +383,7 @@ const SeasonTicketMain = () => {
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-7">
                 <Input
-                  label="First name"
+                  label="Full name"
                   name="fullName"
                   value={form.fullName}
                   handleChange={handleChange}
@@ -419,7 +419,7 @@ const SeasonTicketMain = () => {
                 <div className="flex items-center flex-auto gap-6">
                   <TypeOrSelect
                     isClearable
-                    label="Station origin"
+                    label="Origin"
                     name="origin"
                     labelClass="tracking-[0.28px] text-pp-gray-700"
                     className="flex-1 w-full"
@@ -432,7 +432,7 @@ const SeasonTicketMain = () => {
                   />
                   <TypeOrSelect
                     isClearable
-                    label="Destination origin"
+                    label="Destination"
                     name="destination"
                     labelClass="tracking-[0.28px] text-pp-gray-700"
                     className="flex-1 w-full"
@@ -524,6 +524,21 @@ const SeasonTicketMain = () => {
                   </div>
                 </div>
 
+                {km && (
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Season ticket details
+                    </p>
+                    <p className="text-sm">Distance in km: {km} km</p>
+                    {form.start && form.end ? (
+                      <p className="text-sm">
+                        No of days:{" "}
+                        {moment(form.end).diff(moment(form.start), "days")} days
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+
                 <div>
                   <p className="text-lg font-semibold">Season ticket fee</p>
                   <p className="text-sm">LKR. {fee}</p>
@@ -538,9 +553,6 @@ const SeasonTicketMain = () => {
                   >
                     Submit for approval
                   </Button>
-                  {/* <Button type="submit" variant="light" isLoading={loading}>
-              Cancel
-            </Button> */}
                 </div>
               </div>
             </form>
@@ -549,8 +561,7 @@ const SeasonTicketMain = () => {
             className="sticky top-[173px] w-1/2 mb-6 bg-gray-200 h-screen"
             style={{ height: "calc(100vh - 200px)" }}
           >
-            <APIProvider apiKey="AIzaSyDmwNFfvv3ClUoYkxeYNi372U5-zB6uY70">
-              {/* {google.GOOGLE_API_KEY}> */}
+            <APIProvider apiKey={google.GOOGLE_API_KEY}>
               <Map
                 defaultCenter={{ lat: 6.927079, lng: 79.861244 }}
                 defaultZoom={9}

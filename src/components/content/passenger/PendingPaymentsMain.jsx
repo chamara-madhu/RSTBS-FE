@@ -52,6 +52,7 @@ const PendingPaymentsMain = () => {
   const [data, setData] = useState([]);
   const [showBankDeposits, setShowBankDeposits] = useState(false);
   const [preLoading, setPreLoading] = useState(true);
+  const [loadingOnline, setLoadingOnline] = useState(false);
   const [loadingUpload, setLoadingUpload] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -102,6 +103,7 @@ const PendingPaymentsMain = () => {
   };
 
   const handleOnlinePayment = async () => {
+    setLoadingOnline(true);
     const stripe = await loadStripe(pay.REACT_APP_STEIPE_PUBLISHABLE_KEY);
 
     seasonTicketOnlinePayment(data?.amount, id)
@@ -109,8 +111,12 @@ const PendingPaymentsMain = () => {
         stripe.redirectToCheckout({
           sessionId: res.data.sessionId,
         });
+        // setLoadingOnline(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setLoadingOnline(false);
+      });
   };
 
   return (
@@ -186,12 +192,12 @@ const PendingPaymentsMain = () => {
                     variant="primary"
                     className="w-[400px]"
                     handleButton={handleOnlinePayment}
+                    isLoading={loadingOnline}
                   >
                     Online payment
                   </Button>
                   <p className="text-xs text-pp-gray-500">
-                    Visa, Master, Amex, FriMi, eZ Cash, PayPal, Sampath Vishwa
-                    and more.
+                    Visa, Master, Credit/Debit Cards
                   </p>
                 </div>
                 <p className="text-sm text-pp-gray-500">Or</p>
@@ -231,7 +237,7 @@ const AmountComp = ({ id, amount }) => {
   return (
     <div className="flex flex-col items-center gap-1 p-6 rounded-lg bg-pp-primary-100">
       <p className="text-sm font-medium text-pp-primary-700">
-        Booking ID: {id}
+        Season Ticket ID: {id}
       </p>
       <p className="text-4xl font-bold">Rs. {amount.toFixed(2)}</p>
       <p className="text-sm text-pp-gray-500">Total Due</p>
