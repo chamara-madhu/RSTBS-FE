@@ -35,18 +35,24 @@ const ReviewPaymentApprovalMain = () => {
   }, [id]);
 
   const acceptPayment = (id) => {
-    setLoadingAccept(true);
+    const confirmed = window.confirm(
+      "Are you sure you want to approve this payment?"
+    );
 
-    acceptOrRejectPayment(id, APPLICATION_STATUSES.ACTIVE, null)
-      .then(() => {
-        setLoadingAccept(false);
-        toast.success("Payment has been approved.");
-        navigate(ADMIN_PENDING_PAYMENT_APPROVALS_PATH);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-        setLoadingAccept(false);
-      });
+    if (confirmed) {
+      setLoadingAccept(true);
+
+      acceptOrRejectPayment(id, APPLICATION_STATUSES.ACTIVE, null)
+        .then(() => {
+          setLoadingAccept(false);
+          toast.success("Payment has been approved.");
+          navigate(ADMIN_PENDING_PAYMENT_APPROVALS_PATH);
+        })
+        .catch((err) => {
+          console.error("Error fetching data:", err);
+          setLoadingAccept(false);
+        });
+    }
   };
 
   return (
@@ -61,7 +67,9 @@ const ReviewPaymentApprovalMain = () => {
               <table className="table-fixed">
                 <tbody className="text-sm">
                   <tr>
-                    <td className="py-2 font-medium text-left">Booking ID</td>
+                    <td className="py-2 font-medium text-left">
+                      Season Ticket ID
+                    </td>
                     <td className="px-4 py-2 text-left">{data._id}</td>
                   </tr>
                   <tr>

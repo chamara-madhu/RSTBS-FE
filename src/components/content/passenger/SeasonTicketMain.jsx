@@ -11,18 +11,14 @@ import { useNavigate } from "react-router-dom";
 import { getUserQR } from "../../../api/userAPI";
 import PreLoading from "../../shared/loading/PreLoading";
 import config from "../../../config/api";
-import {
-  APIProvider,
-  Map,
-  useMap,
-  useMapsLibrary,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import Directions from "./Directions";
 import { getSeasonTicketHistory } from "../../../api/seasonTicketAPI";
 import { getAllStations } from "../../../api/stationAPI";
 import { Download } from "feather-icons-react";
 import html2PDF from "jspdf-html2canvas";
 import { toast } from "react-toastify";
+import google from "../../../config/google";
 
 const SeasonTicketMain = () => {
   const [qr, setQr] = useState(null);
@@ -58,9 +54,13 @@ const SeasonTicketMain = () => {
     durationErr: "",
   });
   const [fee, setFee] = useState(0);
+  const [km, setKm] = useState(0);
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  console.log({ user });
+  console.log({ qr });
 
   useEffect(() => {
     Promise.all([getUserQR(), getSeasonTicketHistory()])
@@ -82,7 +82,6 @@ const SeasonTicketMain = () => {
         .then((response) => response.blob())
         .then((blob) => {
           // Now 'blob' contains the content of the remote file as a Blob
-          console.log(blob);
           setQr(blob);
         })
         .catch((error) => console.error("Error fetching the file:", error));
@@ -171,10 +170,14 @@ const SeasonTicketMain = () => {
 
     if (!form.origin) {
       originErr = "Station origin is required";
+    } else if (form.origin === form.destination) {
+      originErr = "Invalid stations";
     }
 
     if (!form.destination) {
       destinationErr = "Station destination is required";
+    } else if (form.origin === form.destination) {
+      destinationErr = "Invalid stations";
     }
 
     if (!form.start) {
@@ -250,7 +253,7 @@ const SeasonTicketMain = () => {
       formData.set("start", form.start);
       formData.set("end", form.end);
       formData.set("amount", fee);
-      formData.set("km", 5);
+      formData.set("km", km);
       formData.append("nicFS", files.nicFS);
       formData.append("nicBS", files.nicBS);
       formData.append("gnCert", files.gnCert);
@@ -285,7 +288,7 @@ const SeasonTicketMain = () => {
         format: "a6",
       },
       imageType: "image/jpeg",
-      output: "./pdf/generate.pdf",
+      output: "./qr.pdf",
     });
 
     setLoading(false);
@@ -301,7 +304,10 @@ const SeasonTicketMain = () => {
       {preLoading ? (
         <PreLoading />
       ) : user?.qr && qr ? (
-        <div className="flex w-full gap-4 mb-6" data-testid="season-ticket-main">
+        <div
+          className="flex w-full gap-4 mb-6"
+          data-testid="season-ticket-main"
+        >
           <div className="flex flex-col items-center justify-center gap-5">
             <div
               className="flex flex-col items-center justify-center gap-4 w-[340px] border rounded-lg p-5"
@@ -313,9 +319,9 @@ const SeasonTicketMain = () => {
                 className="w-[300px] border rounded-lg"
               />
               <p className="text-lg font-medium text-center">
-                Neluwe Liyanage Chamara Madhushanka Gunathilaka
+                {user?.fullName}
               </p>
-              <p className="text-sm text-center">933110443V</p>
+              <p className="text-sm text-center">{user.nic}</p>
             </div>
 
             <Button
@@ -377,7 +383,7 @@ const SeasonTicketMain = () => {
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-7">
                 <Input
-                  label="First name"
+                  label="Full name"
                   name="fullName"
                   value={form.fullName}
                   handleChange={handleChange}
@@ -413,7 +419,7 @@ const SeasonTicketMain = () => {
                 <div className="flex items-center flex-auto gap-6">
                   <TypeOrSelect
                     isClearable
-                    label="Station origin"
+                    label="Origin"
                     name="origin"
                     labelClass="tracking-[0.28px] text-pp-gray-700"
                     className="flex-1 w-full"
@@ -426,7 +432,7 @@ const SeasonTicketMain = () => {
                   />
                   <TypeOrSelect
                     isClearable
-                    label="Destination origin"
+                    label="Destination"
                     name="destination"
                     labelClass="tracking-[0.28px] text-pp-gray-700"
                     className="flex-1 w-full"
@@ -518,9 +524,24 @@ const SeasonTicketMain = () => {
                   </div>
                 </div>
 
+                {km && (
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Season ticket details
+                    </p>
+                    <p className="text-sm">Distance in km: {km} km</p>
+                    {form.start && form.end ? (
+                      <p className="text-sm">
+                        No of days:{" "}
+                        {moment(form.end).diff(moment(form.start), "days")} days
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+
                 <div>
                   <p className="text-lg font-semibold">Season ticket fee</p>
-                  <p className="text-sm">LKR. {fee.toFixed(2)}</p>
+                  <p className="text-sm">LKR. {fee}</p>
                 </div>
 
                 <div className="flex flex-row gap-2 mt-4">
@@ -532,9 +553,6 @@ const SeasonTicketMain = () => {
                   >
                     Submit for approval
                   </Button>
-                  {/* <Button type="submit" variant="light" isLoading={loading}>
-              Cancel
-            </Button> */}
                 </div>
               </div>
             </form>
@@ -543,8 +561,7 @@ const SeasonTicketMain = () => {
             className="sticky top-[173px] w-1/2 mb-6 bg-gray-200 h-screen"
             style={{ height: "calc(100vh - 200px)" }}
           >
-            <APIProvider apiKey="AIzaSyDmwNFfvv3ClUoYkxeYNi372U5-zB6uY70">
-              {/* {google.GOOGLE_API_KEY}> */}
+            <APIProvider apiKey={google.GOOGLE_API_KEY}>
               <Map
                 defaultCenter={{ lat: 6.927079, lng: 79.861244 }}
                 defaultZoom={9}
@@ -557,6 +574,8 @@ const SeasonTicketMain = () => {
                   start={form.start}
                   end={form.end}
                   setFee={setFee}
+                  km={km}
+                  setKm={setKm}
                 />
               </Map>
             </APIProvider>

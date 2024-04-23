@@ -5,7 +5,11 @@ import Button from "../../shared/buttons/Button";
 import Input from "../../shared/fields/Input";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
-import { renewSeasonTicket } from "../../../api/seasonTicketAPI";
+import {
+  getRecentSeasonTicket,
+  getSeasonTicketFee,
+  renewSeasonTicket,
+} from "../../../api/seasonTicketAPI";
 import { toast } from "react-toastify";
 
 const RenewSeasonTicketMain = () => {
@@ -17,21 +21,45 @@ const RenewSeasonTicketMain = () => {
     endErr: "",
   });
   const [fee, setFee] = useState(0);
+  const [recentEndDate, setRecentEndDate] = useState("");
+  const [applicationId, setApplicationId] = useState("");
+  const [km, setKm] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Promise.all([getUserQR(), getSeasonTicketHistory()])
-    //   .then(([userRes, seasonTicketRes]) => {
-    //     setUser(userRes.data);
-    //     setSeasonTicketHistory(seasonTicketRes.data);
-    //     setPreLoading(false);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     setPreLoading(false); // Make sure preLoading is set to false even if there's an error
-    //   });
+    getRecentSeasonTicket()
+      .then((res) => {
+        console.log("res.data", res.data);
+        setKm(res?.data?.km);
+        setRecentEndDate(res?.data?.duration?.end);
+        setApplicationId(res?.data?.applicationId);
+      })
+      .catch((err) => {
+        console.log(err);
+        setPreLoading(false);
+      });
   }, []);
+
+  useEffect(() => {
+    if (km && form?.start && form?.end) {
+      const obj = {
+        distance: km,
+        start: form.start,
+        end: form.end,
+      };
+
+      getSeasonTicketFee(obj)
+        .then((res) => {
+          setFee(Math.round(res.data).toFixed(2));
+          setPreLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setPreLoading(false);
+        });
+    }
+  }, [form.end, form.start, km]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -78,6 +106,8 @@ const RenewSeasonTicketMain = () => {
         start: form.start,
         end: form.end,
         amount: fee,
+        km,
+        applicationId,
       };
 
       renewSeasonTicket(data)
@@ -110,7 +140,13 @@ const RenewSeasonTicketMain = () => {
                     label="Start date"
                     name="start"
                     value={form.start}
-                    min={moment().add(1, "day").format("YYYY-MM-DD")}
+                    min={
+                      moment() > moment(recentEndDate)
+                        ? moment().add(1, "day").format("YYYY-MM-DD")
+                        : moment(recentEndDate)
+                            .add(1, "day")
+                            .format("YYYY-MM-DD")
+                    }
                     max={moment().add(7, "day").format("YYYY-MM-DD")}
                     handleChange={handleChange}
                     error={form.startErr}
@@ -133,9 +169,24 @@ const RenewSeasonTicketMain = () => {
                   />
                 </div>
 
+                {km && (
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Season ticket details
+                    </p>
+                    <p className="text-sm">Distance in km: {km} km</p>
+                    {form.start && form.end ? (
+                      <p className="text-sm">
+                        No of days:{" "}
+                        {moment(form.end).diff(moment(form.start), "days")} days
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+
                 <div>
                   <p className="text-lg font-semibold">Season ticket fee</p>
-                  <p className="text-sm">LKR. {fee.toFixed(2)}</p>
+                  <p className="text-sm">LKR. {fee}</p>
                 </div>
 
                 <div className="flex flex-row gap-2 mt-4">

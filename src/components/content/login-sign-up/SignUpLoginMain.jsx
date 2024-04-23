@@ -1,10 +1,14 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainBg from "../../../assets/images/main-bg.webp";
 import Input from "../../shared/fields/Input";
 import Button from "../../shared/buttons/Button";
 import { loginAPI, signUpAPI, verifyOtpAPI } from "../../../api/authAPIs";
 import { isValidEmail } from "../../../utils/general";
+import {
+  ADMIN_DASHBOARD_PATH,
+  SEASON_TICKET_PATH,
+} from "../../../constant/paths";
 
 const SignUpLoginMain = () => {
   const [showSignUpView, setShowSignUpView] = useState(false);
@@ -21,6 +25,24 @@ const SignUpLoginMain = () => {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const emailRef = useRef(null);
+  const otpRef = useRef(null);
+  const fNameRef = useRef(null);
+
+  useEffect(() => {
+    if (!showOtpView) {
+      if (showSignUpView) {
+        if (!fNameRef.current) return;
+        fNameRef.current.focus();
+      } else {
+        if (!emailRef.current) return;
+        emailRef.current.focus();
+      }
+    } else {
+      if (!otpRef.current) return;
+      otpRef.current.focus();
+    }
+  }, [showOtpView, showSignUpView]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -104,15 +126,13 @@ const SignUpLoginMain = () => {
 
       verifyOtpAPI(data)
         .then((res) => {
-          console.log(res.data);
-          // props.storeUserDetails(res.data.user);
           localStorage.setItem("auth_token", res.data.token);
           localStorage.setItem("user_data", JSON.stringify(res.data.user));
           setLoading(false);
           if (res.data.user.role === 0) {
-            navigate("/admin/new-applications");
+            navigate(ADMIN_DASHBOARD_PATH);
           } else {
-            navigate("/season-ticket");
+            navigate(SEASON_TICKET_PATH);
           }
         })
         .catch((err) => {
@@ -198,15 +218,18 @@ const SignUpLoginMain = () => {
   };
 
   return (
-    <div className="flex w-full h-full" data-testid="signup-login-main">
-      <div className="flex w-1/2 h-[100vh]">
+    <div
+      className="flex flex-col sm:flex-row w-full h-full"
+      data-testid="signup-login-main"
+    >
+      <div className="hidden sm:flex w-1/3 md:w-1/2 h-[100vh]">
         <img
           src={MainBg}
           alt="main bg"
           className="object-cover w-full h-full"
         />
       </div>
-      <div className="flex w-1/2 h-[100vh] items-center justify-center">
+      <div className="flex w-full sm:w-2/3 md:w-1/2 h-[100vh] items-center justify-center">
         <div className="flex flex-col w-full sm:w-[320] max-w-[320px]">
           <p className="text-2xl">Railway Season Ticket</p>
           <p className="mb-10 text-4xl font-bold">Booking System</p>
@@ -219,6 +242,7 @@ const SignUpLoginMain = () => {
               {showSignUpView && (
                 <>
                   <Input
+                    ref={fNameRef}
                     label="First Name"
                     name="fName"
                     value={form.fName}
@@ -235,6 +259,7 @@ const SignUpLoginMain = () => {
                 </>
               )}
               <Input
+                ref={emailRef}
                 label="Email"
                 name="email"
                 value={form.email}
@@ -291,6 +316,7 @@ const SignUpLoginMain = () => {
           ) : (
             <form className="flex flex-col gap-6" onSubmit={handleOTP}>
               <Input
+                ref={otpRef}
                 label="OTP"
                 name="otp"
                 value={form.otp}
