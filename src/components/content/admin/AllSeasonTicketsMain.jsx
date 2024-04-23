@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import PageHeader from "../../shared/headers/PageHeader";
-import { ADMIN_REVIEW_PAYMENT_APPROVAL_PATH } from "../../../constant/paths";
-import { getAllPendingPaymentApprovals } from "../../../api/applicationAPIs";
 import Button from "../../shared/buttons/Button";
 import Input from "../../shared/fields/Input";
 import moment from "moment";
+import { getAllSeasonTickets } from "../../../api/seasonTicketAPI";
+import { APPLICATION_STATUSES } from "../../../constant/general";
 
-const PendingPaymentApprovalsMain = () => {
+const AllSeasonTicketsMain = () => {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [newApplications, setNewApplications] = useState(1);
   const recordsPerPage = 20;
-  const navigate = useNavigate();
 
   useEffect(() => {
-    getAllPendingPaymentApprovals()
+    getAllSeasonTickets()
       .then((res) => {
         setData(res.data);
       })
@@ -24,11 +22,9 @@ const PendingPaymentApprovalsMain = () => {
       });
   }, []);
 
-  console.log({ data });
-
   const filteredRequests = data.filter((request) => {
     const searchString =
-      `${request.applicationId.fullName} ${request.applicationId.nic} ${request.applicationId.stations.origin} ${request.applicationId.stations.destination} ${request.duration} ${request.amount}`.toLowerCase();
+      `${request._id}  ${request.applicationId.fullName} ${request.applicationId.nic} ${request.applicationId.stations.origin} ${request.applicationId.stations.destination} ${request.duration} ${request.amount}`.toLowerCase();
     return searchString.includes(searchQuery.toLowerCase());
   });
 
@@ -50,14 +46,29 @@ const PendingPaymentApprovalsMain = () => {
     setNewApplications(1);
   };
 
-  const handleReviewClick = (id) => {
-    navigate(`${ADMIN_REVIEW_PAYMENT_APPROVAL_PATH.replace(":id", id)}`);
+  const getStatus = (status) => {
+    switch (status) {
+      case APPLICATION_STATUSES.APPLICATION_PENDING:
+        return "Pending";
+      case APPLICATION_STATUSES.PAYMENT_PENDING:
+        return "Pending payment";
+      case APPLICATION_STATUSES.PAYMENT_APPROVAL_PENDING:
+        return "Pending approval payment";
+      case APPLICATION_STATUSES.APPLICATION_REJECTED:
+        return "Application rejected";
+      case APPLICATION_STATUSES.ACTIVE:
+        return "Active";
+      case APPLICATION_STATUSES.PAYMENT_REJECTED:
+        return "Payment rejected";
+      default:
+        return "Expired";
+    }
   };
 
   return (
     <>
-      <PageHeader title="Pending payment approvals" />
-      <div className="w-full" data-testid="pending-payment-approvals-main">
+      <PageHeader title="All season tickets" />
+      <div className="w-full" data-testid="all-new-applications-main">
         {data.length > 0 ? (
           <div className="flex flex-col gap-4">
             <Input
@@ -70,6 +81,7 @@ const PendingPaymentApprovalsMain = () => {
             <table className="table-fixed">
               <thead className="h-14">
                 <tr className="text-sm text-left">
+                  <th className="px-4 font-medium border">Season ticket ID</th>
                   <th className="px-4 font-medium border">Name</th>
                   <th className="px-4 font-medium border">NIC</th>
                   <th className="px-4 font-medium border">
@@ -79,12 +91,13 @@ const PendingPaymentApprovalsMain = () => {
                     Start - end duration
                   </th>
                   <th className="px-4 font-medium border">Amount (Rs.)</th>
-                  <th className="px-4 font-medium border"></th>
+                  <th className="px-4 font-medium border">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {currentRequests.map((ticket, index) => (
                   <tr key={index}>
+                    <td className="px-4 py-2 border">{ticket._id}</td>
                     <td className="px-4 py-2 border">
                       {ticket.applicationId.fullName}
                     </td>
@@ -106,12 +119,7 @@ const PendingPaymentApprovalsMain = () => {
                       {ticket.amount.toFixed(2)}
                     </td>
                     <td className="px-4 py-2 border">
-                      <Button
-                        variant="primary"
-                        handleButton={() => handleReviewClick(ticket._id)}
-                      >
-                        Review
-                      </Button>
+                      {getStatus(ticket.status)}
                     </td>
                   </tr>
                 ))}
@@ -141,11 +149,11 @@ const PendingPaymentApprovalsMain = () => {
             )}
           </div>
         ) : (
-          <p className="text-sm">No pending payment approvals</p>
+          <p className="text-sm">No records</p>
         )}
       </div>
     </>
   );
 };
 
-export default PendingPaymentApprovalsMain;
+export default AllSeasonTicketsMain;

@@ -27,7 +27,7 @@ const BookingUsageMain = () => {
 
   return (
     <>
-      <PageHeader title="Calender" showBack />
+      <PageHeader title="Timeline and Calender" showBack />
       {preLoading ? (
         <PreLoading />
       ) : (
@@ -50,6 +50,23 @@ const BookingUsageMain = () => {
               />
             </div>
           )}
+          <div className="w-full">
+            <p className="mb-4 text-base font-semibold">Event Timeline</p>
+            {booking.flow.map((event, i) => (
+              <p className="mb-1 text-sm" key={i}>
+                <span className="font-medium">
+                  {moment.utc(event.date).local().format("DD-MM-YYYY HH:MM a")}{" "}
+                  :
+                </span>{" "}
+                {event.name}{" "}
+                {event.note ? (
+                  <span className="text-red-700">
+                    (Reason for rejection: {event.note})
+                  </span>
+                ) : null}
+              </p>
+            ))}
+          </div>
         </div>
       )}
     </>

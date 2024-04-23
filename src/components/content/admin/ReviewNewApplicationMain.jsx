@@ -13,6 +13,7 @@ import PreLoading from "../../shared/loading/PreLoading";
 import { APPLICATION_STATUSES } from "../../../constant/general";
 import { ADMIN_NEW_APPLICATIONS_PATH } from "../../../constant/paths";
 import ApplicationRejectionModal from "./modals/ApplicationRejectionModal";
+import { toast } from "react-toastify";
 
 const ReviewNewApplicationMain = () => {
   const [data, setData] = useState(null);
@@ -35,17 +36,24 @@ const ReviewNewApplicationMain = () => {
   }, [id]);
 
   const acceptApplication = (id) => {
-    setLoadingAccept(true);
+    const confirmed = window.confirm(
+      "Are you sure you want to approve this application?"
+    );
 
-    acceptOrRejectApplication(id, APPLICATION_STATUSES.PAYMENT_PENDING, null)
-      .then(() => {
-        setLoadingAccept(false);
-        navigate(ADMIN_NEW_APPLICATIONS_PATH);
-      })
-      .catch((err) => {
-        console.error("Error fetching data:", err);
-        setLoadingAccept(false);
-      });
+    if (confirmed) {
+      setLoadingAccept(true);
+
+      acceptOrRejectApplication(id, APPLICATION_STATUSES.PAYMENT_PENDING, null)
+        .then(() => {
+          setLoadingAccept(false);
+          toast.success("Application has been approved.");
+          navigate(ADMIN_NEW_APPLICATIONS_PATH);
+        })
+        .catch((err) => {
+          console.error("Error fetching data:", err);
+          setLoadingAccept(false);
+        });
+    }
   };
 
   return (
@@ -54,7 +62,10 @@ const ReviewNewApplicationMain = () => {
       {preLoading ? (
         <PreLoading />
       ) : (
-        <div className="relative flex w-full gap-6 mb-6">
+        <div
+          className="relative flex w-full gap-6 mb-6"
+          data-testid="review-new-application-main"
+        >
           <div style={{ width: "calc(100% - 400px)" }}>
             {data && (
               <table className="table-fixed">
@@ -154,7 +165,7 @@ const ReviewNewApplicationMain = () => {
               </Button>
             </div>
           </div>
-          <div className="sticky top-[173px] flex flex-col gap-4 w-[400px] h-screen">
+          <div className="sticky top-[173px] flex flex-col gap-4 w-[400px]">
             <img
               src={`${config.S3_PUBLIC_URL}/${data?.applicationId?.nicImages?.fs}`}
               alt="NIC front side"

@@ -19,6 +19,7 @@ import {
 import Directions from "./Directions";
 import { getSeasonTicket } from "../../../api/seasonTicketAPI";
 import { getAllStations } from "../../../api/stationAPI";
+import { toast } from "react-toastify";
 
 const SeasonTicketReSubmissionMain = () => {
   const [preLoading, setPreLoading] = useState(true);
@@ -56,6 +57,7 @@ const SeasonTicketReSubmissionMain = () => {
     durationErr: "",
   });
   const [fee, setFee] = useState(0);
+  const [km, setKm] = useState(0);
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -177,10 +179,14 @@ const SeasonTicketReSubmissionMain = () => {
 
     if (!form.origin) {
       originErr = "Station origin is required";
+    } else if (form.origin === form.destination) {
+      originErr = "Invalid stations";
     }
 
     if (!form.destination) {
       destinationErr = "Station destination is required";
+    } else if (form.origin === form.destination) {
+      destinationErr = "Invalid stations";
     }
 
     if (!form.start) {
@@ -258,7 +264,7 @@ const SeasonTicketReSubmissionMain = () => {
       formData.set("start", form.start);
       formData.set("end", form.end);
       formData.set("amount", fee);
-      formData.set("km", 5);
+      formData.set("km", km);
       if (files?.nicFS) {
         formData.append("nicFS", files.nicFS);
       }
@@ -272,6 +278,7 @@ const SeasonTicketReSubmissionMain = () => {
       reSubmitApplication(formData)
         .then(() => {
           setLoading(false);
+          toast.success("Application has been re-submitted.");
           navigate("/booking-history");
         })
         .catch((err) => {
@@ -295,7 +302,10 @@ const SeasonTicketReSubmissionMain = () => {
       {preLoading ? (
         <PreLoading />
       ) : (
-        <div className="relative flex gap-6">
+        <div
+          className="relative flex gap-6"
+          data-testid="season-ticket-resubmission-main"
+        >
           <div className="w-1/2 mb-6">
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-7">
@@ -441,9 +451,24 @@ const SeasonTicketReSubmissionMain = () => {
                   </div>
                 </div>
 
+                {km && (
+                  <div>
+                    <p className="text-lg font-semibold">
+                      Season ticket details
+                    </p>
+                    <p className="text-sm">Distance in km: {km} km</p>
+                    {form.start && form.end ? (
+                      <p className="text-sm">
+                        No of days:{" "}
+                        {moment(form.end).diff(moment(form.start), "days")} days
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+
                 <div>
                   <p className="text-lg font-semibold">Season ticket fee</p>
-                  <p className="text-sm">LKR. {fee.toFixed(2)}</p>
+                  <p className="text-sm">LKR. {fee}</p>
                 </div>
 
                 <div className="flex flex-row gap-2 mt-4">
@@ -484,6 +509,8 @@ const SeasonTicketReSubmissionMain = () => {
                   start={form.start}
                   end={form.end}
                   setFee={setFee}
+                  km={km}
+                  setKm={setKm}
                 />
               </Map>
             </APIProvider>
